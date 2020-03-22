@@ -1,0 +1,23 @@
+{
+  "name": "Netflix Party",
+  "version": "1.0",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "browser_action": {
+    "default_popup": "pages/index.html",
+    "default_icon": "images/release-icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.netflix.com/*"],
+      "js": ["scripts/netflix.js"]
+    }
+  ],
+  "manifest_version": 2
+}
+
