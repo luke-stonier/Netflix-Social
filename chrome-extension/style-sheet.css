@@ -1,0 +1,15 @@
+button {
+    background: none;
+    border: none;
+    color: white;
+    outline: none;
+}
+
+button:hover {
+    cursor: pointer;
+    color: red;
+}
+
+button:active {
+    color: darkred;
+}
