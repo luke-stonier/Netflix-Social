@@ -10,27 +10,44 @@
 <body style="background: black; color: white;">
     <h1 style="text-align: center; color: red;">Netflix Party</h1>
 
-    <button id="connect">
-        <i class="material-icons">cloud</i>
-    </button>
-    <button id="close">
-        <i class="material-icons">close</i>
-    </button>
+    <div class="connection-container">
+        <input id="group_id" placeholder="Group Id" value="netflix-party" />
+        <input type="checkbox" hidden id="live" checked="true" />
+
+        <div class="icon-container">
+            <button id="connect">
+                <i class="material-icons">cloud</i>
+                <p>connect</p>
+            </button>
+            <button id="close">
+                <i class="material-icons">close</i>
+                <p>close</p>
+            </button>
+            <button id="send">
+                <i class="material-icons">send</i>
+                <p>send</p>
+            </button>
+        </div>
+
+        <div class="icon-container">
+            <button id="play">
+                <i class="material-icons">play_arrow</i>
+                <p>play</p>
+            </button>
+            <button id="pause">
+                <i class="material-icons">pause</i>
+                <p>pause</p>
+            </button>
+            <button id="sync">
+                <i class="material-icons">sync_alt</i>
+                <p>sync</p>
+            </button>
+        </div>
+    </div>
 
     <p>Session ID: <span id="session_id">NOT CONNECTED</span></p>
     <p>Live users: <span id="live_users">NOT CONNECTED</span></p>
     <p>Time stamp: <span id="time_stamp">NOT CONNECTED</span></p>
-    <div>
-        <button id="play">
-            <i class="material-icons">play_arrow</i>
-        </button>
-        <button id="pause">
-            <i class="material-icons">pause</i>
-        </button>
-        <button id="sync">
-            <i class="material-icons">sync_alt</i>
-        </button>
-    </div>
 </body>
 
 </html>

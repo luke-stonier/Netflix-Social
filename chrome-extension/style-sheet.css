@@ -13,3 +13,32 @@ button:hover {
 button:active {
     color: darkred;
 }
+
+input {
+    border: none;
+    padding: 5px;
+    background: rgb(46, 46, 46);
+    color: white;
+}
+
+input::placeholder {
+    color: white;
+}
+
+#group_id {
+    width: 100%;
+}
+
+.connection-container {
+    width: 50%;
+}
+
+.connection-container * {
+    vertical-align: middle;
+}
+
+.icon-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+}
