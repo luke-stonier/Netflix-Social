@@ -18,15 +18,6 @@ function setup() {
     });
     port.onMessage.addListener(function(msg) {
         clientSyncInject();
-        // if (!msg.active) {
-        //     console.log("Inject to start");
-        //     chrome.tabs.executeScript(_tab.id, { file: '/scripts/inject.js' }, () => {
-        //         clientSyncInject();
-        //     });
-        // } else {
-        //     console.log("don't inject already running");
-        //     clientSyncInject();
-        // }
     });
 
     document.getElementById("play").addEventListener("click", () => {
