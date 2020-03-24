@@ -1,14 +1,33 @@
-// this syncs the data between the client and server
-
+console.log("netflix-sync.js running");
 var player = null;
 setup();
 
 function setup() {
     getPlayer();
+    createSyncButton();
+    createPlayButton();
+    createPauseButton();
+    if (!player) { console.error("no player"); return; }
+    sync();
+}
+
+function sync() {
+    if (!player) { getPlayer(); }
+    if (!player) { return; }
     getCurrentPlayTime();
+    setupWebSocket();
+}
+
+function play_pause(play) {
+    if (!player) { getPlayer(); }
+    if (!player) { return; }
+    play ? player.play() : player.pause();
+    if (socket.readyState == 1)
+        socket.send(play ? 'play' : 'pause');
 }
 
 function getPlayer() {
+    if (!window.netflix) { return; }
     var videoPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
     console.log(player ? 'Got Player' : 'No player found');
@@ -25,12 +44,12 @@ function getVideoDetails() {
 }
 
 function getCurrentPlayTime() {
-    if (!player) { console.error("no player attached"); setHiddenDetails('current_time', player.getCurrentTime()); return; }
+    if (!player) { console.log("no player attached"); return; }
     setHiddenDetails('current_time', player.getCurrentTime());
 }
 
 function syncTime(time) {
-    if (!player) { console.error("no player attached"); return; }
+    if (!player) { console.log("no player attached"); return; }
     player.seek(time);
 }
 
@@ -42,4 +61,34 @@ function setHiddenDetails(id, text) {
     x.innerText = text;
     x.style.display = "none";
     document.body.append(x);
+}
+
+function createSyncButton() {
+    var x = document.createElement("button");
+    x.id = "netflix_party_sync";
+    x.style.display = "none";
+    document.body.append(x);
+    document.getElementById("netflix_party_sync").addEventListener("click", () => {
+        sync();
+    });
+}
+
+function createPlayButton() {
+    var x = document.createElement("button");
+    x.id = "netflix_party_play";
+    x.style.display = "none";
+    document.body.append(x);
+    document.getElementById("netflix_party_play").addEventListener("click", () => {
+        play_pause(true);
+    });
+}
+
+function createPauseButton() {
+    var x = document.createElement("button");
+    x.id = "netflix_party_pause";
+    x.style.display = "none";
+    document.body.append(x);
+    document.getElementById("netflix_party_pause").addEventListener("click", () => {
+        play_pause(false);
+    });
 }

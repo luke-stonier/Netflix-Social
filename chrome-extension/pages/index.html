@@ -4,13 +4,22 @@
     <link rel="stylesheet" type="text/css" href="../style-sheet.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="../scripts/popup.js"></script>
+    <script src="../scripts/web-socket-client.js"></script>
 </head>
 
 <body style="background: black; color: white;">
     <h1 style="text-align: center; color: red;">Netflix Party</h1>
-    <p>Session ID:</p>
-    <!-- <p>Watching:</p> -->
-    <p>Live users:</p>
+
+    <button id="connect">
+        <i class="material-icons">cloud</i>
+    </button>
+    <button id="close">
+        <i class="material-icons">close</i>
+    </button>
+
+    <p>Session ID: <span id="session_id">NOT CONNECTED</span></p>
+    <p>Live users: <span id="live_users">NOT CONNECTED</span></p>
+    <p>Time stamp: <span id="time_stamp">NOT CONNECTED</span></p>
     <div>
         <button id="play">
             <i class="material-icons">play_arrow</i>
