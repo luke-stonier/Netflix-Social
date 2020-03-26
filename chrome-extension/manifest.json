@@ -5,6 +5,12 @@
     "scripts": ["background.js"],
     "persistent": false
   },
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["/scripts/get-client-data.js"]
+    }
+  ],
   "permissions": [
     "tabs",
     "activeTab",

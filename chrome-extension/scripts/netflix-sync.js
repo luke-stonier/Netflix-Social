@@ -7,7 +7,7 @@ function setup() {
     createSyncButton();
     createPlayButton();
     createPauseButton();
-    if (!player) { console.error("no player"); return; }
+    if (!player) { console.log("no player"); return; }
     sync();
 }
 
@@ -15,15 +15,12 @@ function sync() {
     if (!player) { getPlayer(); }
     if (!player) { return; }
     getCurrentPlayTime();
-    setupWebSocket();
 }
 
 function play_pause(play) {
     if (!player) { getPlayer(); }
     if (!player) { return; }
     play ? player.play() : player.pause();
-    if (socket.readyState == 1)
-        socket.send(play ? 'play' : 'pause');
 }
 
 function getPlayer() {
@@ -38,7 +35,6 @@ function getVideoDetails() {
     Object.keys(netflix.falcorCache.videos).forEach((element) => {
         i++;
         var x = netflix.falcorCache.videos[element];
-        console.log(x);
         setHiddenDetails('detail_' + i, x.title.value);
     });
 }

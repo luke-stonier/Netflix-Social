@@ -1,64 +1,59 @@
 var _tab;
 var hasInjected = false;
 var time_sync_millis = 0;
+var live = false;
 
-window.onload = function() {
+window.onload = function () {
     setup();
 };
 
-function clientSyncInject() {
-    chrome.tabs.executeScript(_tab.id, { file: '/scripts/get-client-data.js' }, (result) => {
-        parseServerData(result[0])
-    });
+function _dataModel(local) {
+    return {
+        sender: local ? 'local' : 'remote',
+        data: {}
+    };
 }
 
 function setup() {
-    var port = chrome.extension.connect({
-        name: "Sample Communication"
-    });
-    port.onMessage.addListener(function(msg) {
-        clientSyncInject();
-    });
-
     document.getElementById("play").addEventListener("click", () => {
-        sendMessage("play")
+        var message = _dataModel(false);
+        message.data.action = "play";
+        sendMessageToBackgroundScript(message);
     });
 
     document.getElementById("pause").addEventListener("click", () => {
-        sendMessage("pause")
+        var message = _dataModel(false);
+        message.data.action = "pause";
+        sendMessageToBackgroundScript(message);
     });
 
     document.getElementById("sync").addEventListener("click", () => {
-        sendMessage("sync")
+        var message = _dataModel(false);
+        message.data.action = "sync";
+        sendMessageToBackgroundScript(message);
     });
 
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        port.postMessage("startup");
-        _tab = tabs[0];
+    document.getElementById("connect").addEventListener("click", () => {
+        var groupId = document.getElementById("group_id").value;
+
+        var message = _dataModel(true);
+        message.data.action = "connect";
+        message.data.params = [];
+        message.data.params[0] = groupId;
+        message.data.params[1] = live;
+        sendMessageToBackgroundScript(message);
     });
+
+    document.getElementById("close").addEventListener("click", () => {
+        var message = _dataModel(true);
+        message.data.action = "close";
+        sendMessageToBackgroundScript(message);
+    })
 }
 
-function sendMessage(state) {
-    chrome.tabs.sendMessage(_tab.id, {message: state}, function(response) {
-        parseServerData(response);
+function sendMessageToBackgroundScript(message) {
+    chrome.runtime.sendMessage(message, (resp) => {
+        if(resp)
+            console.log(resp);
     });
-}
-
-function parseServerData(response) {
-    console.log(response);
-    if (!response) { return; }
-    time_sync_millis = response.data.time_stamp;
-    document.getElementById('time_stamp').innerText = millisecondsToClient(time_sync_millis);
-}
-
-function millisecondsToClient(duration) {
-    var milliseconds = parseInt((duration%1000))
-        , seconds = parseInt((duration/1000)%60)
-        , minutes = parseInt((duration/(1000*60))%60)
-        , hours = parseInt((duration/(1000*60*60))%24);
-
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-    return `${hours}:${minutes}:${seconds}`;
 }
