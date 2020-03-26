@@ -4,7 +4,6 @@ var data = getData();
 //var port = chrome.runtime.connect({name: 'background-netflix-sync'});
 chrome.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener(function(message){
-        console.log(message);
         if (!message) { return; }
 
         var embedded_play = document.getElementById("netflix_party_play");
