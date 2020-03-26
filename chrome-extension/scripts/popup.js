@@ -29,12 +29,6 @@ function setup() {
         sendMessageToBackgroundScript(message);
     });
 
-    document.getElementById("sync").addEventListener("click", () => {
-        var message = _dataModel(false);
-        message.data.action = "sync";
-        sendMessageToBackgroundScript(message);
-    });
-
     document.getElementById("connect").addEventListener("click", () => {
         var groupId = document.getElementById("group_id").value;
 
