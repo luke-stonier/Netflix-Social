@@ -1,7 +1,7 @@
 var _tab;
 var hasInjected = false;
 var time_sync_millis = 0;
-var live = false;
+var live = true;
 
 window.onload = function () {
     setup();
