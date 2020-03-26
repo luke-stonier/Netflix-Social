@@ -10,7 +10,9 @@ window.onload = function () {
 function _dataModel(local) {
     return {
         sender: local ? 'local' : 'remote',
-        data: {}
+        data: {
+            time: Date.now()
+        }
     };
 }
 

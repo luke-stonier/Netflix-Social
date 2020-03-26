@@ -2,15 +2,11 @@
   "name": "Netflix Party",
   "version": "1.0",
   "background": {
-    "scripts": ["background.js"],
+    "scripts": [
+      "background.js"
+    ],
     "persistent": false
   },
-  "content_scripts": [
-    {
-      "matches": ["*://*.netflix.com/*"],
-      "js": ["/scripts/get-client-data.js"]
-    }
-  ],
   "permissions": [
     "tabs",
     "activeTab",
@@ -18,7 +14,9 @@
     "http://*/*",
     "https://*/*"
   ],
-  "web_accessible_resources": ["/scripts/netflix-sync.js"],
+  "web_accessible_resources": [
+    "/scripts/netflix-sync.js"
+  ],
   "browser_action": {
     "default_popup": "pages/index.html",
     "default_icon": "images/release-icon.png"
