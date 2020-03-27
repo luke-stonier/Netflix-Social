@@ -60,7 +60,9 @@ function setHiddenDetails(id, text) {
 }
 
 function createSyncButton() {
-    var x = document.createElement("button");
+    var x = document.getElementById("netflix_party_sync");
+    if (!x)
+        x = document.createElement("button");
     x.id = "netflix_party_sync";
     x.style.display = "none";
     document.body.append(x);
@@ -70,7 +72,9 @@ function createSyncButton() {
 }
 
 function createPlayButton() {
-    var x = document.createElement("button");
+    var x = document.getElementById("netflix_party_play");
+    if (!x)
+        x = document.createElement("button");
     x.id = "netflix_party_play";
     x.style.display = "none";
     document.body.append(x);
@@ -80,7 +84,9 @@ function createPlayButton() {
 }
 
 function createPauseButton() {
-    var x = document.createElement("button");
+    var x = document.getElementById("netflix_party_pause");
+    if (!x)
+        x = document.createElement("button");
     x.id = "netflix_party_pause";
     x.style.display = "none";
     document.body.append(x);

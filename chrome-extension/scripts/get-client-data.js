@@ -31,7 +31,7 @@ function getData() {
         data: {
             seek_time: current_time
         }
-    }
+    };
 }
 
 data;
