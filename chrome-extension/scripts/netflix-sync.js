@@ -3,6 +3,7 @@ var player = null;
 setup();
 
 function setup() {
+    console.log("setup called");
     getPlayer();
     createSyncButton();
     createPlayButton();
@@ -12,12 +13,14 @@ function setup() {
 }
 
 function sync() {
+    console.log("sync called");
     if (!player) { getPlayer(); }
     if (!player) { return; }
     getCurrentPlayTime();
 }
 
 function play_pause(play) {
+    console.log(`play pause called ${play}`);
     if (!player) { getPlayer(); }
     if (!player) { return; }
     play ? player.play() : player.pause();
@@ -61,8 +64,8 @@ function setHiddenDetails(id, text) {
 
 function createSyncButton() {
     var x = document.getElementById("netflix_party_sync");
-    if (!x)
-        x = document.createElement("button");
+    if (x) return;
+    x = document.createElement("button");
     x.id = "netflix_party_sync";
     x.style.display = "none";
     document.body.append(x);
@@ -73,8 +76,8 @@ function createSyncButton() {
 
 function createPlayButton() {
     var x = document.getElementById("netflix_party_play");
-    if (!x)
-        x = document.createElement("button");
+    if (x) return;
+    x = document.createElement("button");
     x.id = "netflix_party_play";
     x.style.display = "none";
     document.body.append(x);
@@ -85,8 +88,8 @@ function createPlayButton() {
 
 function createPauseButton() {
     var x = document.getElementById("netflix_party_pause");
-    if (!x)
-        x = document.createElement("button");
+    if (x) return;
+    x = document.createElement("button");
     x.id = "netflix_party_pause";
     x.style.display = "none";
     document.body.append(x);
