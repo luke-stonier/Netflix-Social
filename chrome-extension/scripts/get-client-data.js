@@ -9,13 +9,14 @@ chrome.runtime.onConnect.addListener((port) => {
         var embedded_play = document.getElementById("netflix_party_play");
         var embedded_pause = document.getElementById("netflix_party_pause");
         if (!embedded_play || !embedded_pause) { return; }
-    
-        if (message.data.action == "play")
-            embedded_play.click();
-    
-        if (message.data.action == "pause")
-            embedded_pause.click();
-    
+        if (message.data) {
+            if (message.data.action == "play")
+                embedded_play.click();
+        
+            if (message.data.action == "pause")
+                embedded_pause.click();
+        }
+
         port.postMessage(getData());
     });
 });
