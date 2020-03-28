@@ -17,6 +17,12 @@ function _dataModel(local) {
     };
 }
 
+function isLive() {
+    var isLive = document.getElementById('is_live').checked;
+    console.log(isLive);
+    return isLive;
+}
+
 function setup() {
     document.getElementById("play").addEventListener("click", () => {
         var message = _dataModel(false);
@@ -37,7 +43,7 @@ function setup() {
         message.data.action = "connect";
         message.data.params.groupId = groupId;
         message.data.params.host = true;
-        message.data.params.live = live;    // debug
+        message.data.params.live = isLive();    // debug
         sendMessageToBackgroundScript(message);
     });
 
@@ -48,7 +54,7 @@ function setup() {
         message.data.action = "connect";
         message.data.params.groupId = groupId;
         message.data.params.host = false;
-        message.data.params.live = live;    // debug
+        message.data.params.live = isLive();    // debug
         sendMessageToBackgroundScript(message);
     });
 
