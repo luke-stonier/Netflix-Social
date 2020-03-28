@@ -1,7 +1,7 @@
 var _tab;
 var hasInjected = false;
 var time_sync_millis = 0;
-var live = true;
+var live = false;
 
 window.onload = function () {
     setup();
@@ -11,7 +11,8 @@ function _dataModel(local) {
     return {
         sender: local ? 'local' : 'remote',
         data: {
-            time: Date.now()
+            time: Date.now(),
+            params: {}
         }
     };
 }
@@ -34,9 +35,9 @@ function setup() {
 
         var message = _dataModel(true);
         message.data.action = "connect";
-        message.data.params = [];
-        message.data.params[0] = groupId;
-        message.data.params[1] = live;
+        message.data.params.groupId = groupId;
+        message.data.params.host = true;
+        message.data.params.live = live;    // debug
         sendMessageToBackgroundScript(message);
     });
 
