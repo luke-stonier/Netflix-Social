@@ -30,13 +30,24 @@ function setup() {
         sendMessageToBackgroundScript(message);
     });
 
-    document.getElementById("connect").addEventListener("click", () => {
+    document.getElementById("host").addEventListener("click", () => {
         var groupId = document.getElementById("group_id").value;
 
         var message = _dataModel(true);
         message.data.action = "connect";
         message.data.params.groupId = groupId;
         message.data.params.host = true;
+        message.data.params.live = live;    // debug
+        sendMessageToBackgroundScript(message);
+    });
+
+    document.getElementById("join").addEventListener("click", () => {
+        var groupId = document.getElementById("group_id").value;
+
+        var message = _dataModel(true);
+        message.data.action = "connect";
+        message.data.params.groupId = groupId;
+        message.data.params.host = false;
         message.data.params.live = live;    // debug
         sendMessageToBackgroundScript(message);
     });
