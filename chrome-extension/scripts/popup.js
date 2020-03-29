@@ -24,6 +24,10 @@ function isLive() {
 }
 
 function setup() {
+    var wakeMessage = _dataModel(true);
+    wakeMessage.data.action = "wake";
+    sendMessageToBackgroundScript(wakeMessage);
+
     document.getElementById("play").addEventListener("click", () => {
         var message = _dataModel(false);
         message.data.action = "play";
