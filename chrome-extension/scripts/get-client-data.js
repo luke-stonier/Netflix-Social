@@ -16,16 +16,23 @@ chrome.runtime.onConnect.addListener((port) => {
         
             if (message.data.action == "pause")
                 embedded_pause.click();
+            if(message.data.action == "sync_time")
+                set_sync_time(message.data.seek_time);
         }
 
         port.postMessage(getData());
     });
 });
 
+function set_sync_time(time) {
+    document.getElementById("netflix_party_sync").innerText = time;
+    document.getElementById("netflix_party_sync").click();
+}
+
 function getData() {
-    var embedded_sync = document.getElementById("netflix_party_sync");
-    if (!embedded_sync) { return; }
-    embedded_sync.click();
+    var embedded_get_data = document.getElementById("netflix_party_get_data");
+    if (!embedded_get_data) { return; }
+    embedded_get_data.click();
     var current_time = document.getElementById("current_time").innerText;
 
     return {

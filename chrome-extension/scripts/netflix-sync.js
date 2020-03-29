@@ -3,24 +3,21 @@ var player = null;
 setup();
 
 function setup() {
-    console.log("setup called");
     getPlayer();
-    createSyncButton();
+    createGetDataButton();
     createPlayButton();
     createPauseButton();
     if (!player) { console.log("no player"); return; }
-    sync();
+    getData();
 }
 
-function sync() {
-    console.log("sync called");
+function getData() {
     if (!player) { getPlayer(); }
     if (!player) { return; }
     getCurrentPlayTime();
 }
 
 function play_pause(play) {
-    console.log(`play pause called ${play}`);
     if (!player) { getPlayer(); }
     if (!player) { return; }
     play ? player.play() : player.pause();
@@ -49,7 +46,9 @@ function getCurrentPlayTime() {
 
 function syncTime(time) {
     if (!player) { console.log("no player attached"); return; }
+    console.log(`sync time to ${time} (current: ${player.getCurrentTime()})`);
     player.seek(time);
+    console.log(`sync time to ${time} (new: ${player.getCurrentTime()})`);
 }
 
 function setHiddenDetails(id, text) {
@@ -62,15 +61,29 @@ function setHiddenDetails(id, text) {
     document.body.append(x);
 }
 
+function createGetDataButton() {
+    var x = document.getElementById("netflix_party_get_data");
+    if (x) return;
+    x = document.createElement("button");
+    x.id = "netflix_party_get_data";
+    x.style.display = "none";
+    document.body.append(x);
+    document.getElementById("netflix_party_get_data").addEventListener("click", () => {
+        getData();
+    });
+}
+
 function createSyncButton() {
     var x = document.getElementById("netflix_party_sync");
     if (x) return;
     x = document.createElement("button");
     x.id = "netflix_party_sync";
+    x.innerText = "0";
     x.style.display = "none";
     document.body.append(x);
     document.getElementById("netflix_party_sync").addEventListener("click", () => {
-        sync();
+        var time = document.getElementById("netflix_party_sync").innerText;
+        syncTime(time);
     });
 }
 
