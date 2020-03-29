@@ -19,7 +19,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
             if(message.data.action == "sync_time") {
                 console.log(message);
-                // set_sync_time(message.data.seek_time);
+                set_sync_time(message.data.seek_time);
             }
         }
 
