@@ -5,6 +5,7 @@ setup();
 function setup() {
     getPlayer();
     createGetDataButton();
+    createSyncButton();
     createPlayButton();
     createPauseButton();
     if (!player) { console.log("no player"); return; }

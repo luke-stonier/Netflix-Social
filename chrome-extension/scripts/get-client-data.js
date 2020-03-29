@@ -3,8 +3,8 @@ var data = getData();
 
 //var port = chrome.runtime.connect({name: 'background-netflix-sync'});
 chrome.runtime.onConnect.addListener((port) => {
+    if(port.onMessage.hasListeners()) { return; }
     port.onMessage.addListener(function(message) {
-        console.log("get-client-data.js got message");
         if (!message) { return; }
 
         var embedded_play = document.getElementById("netflix_party_play");
@@ -16,8 +16,11 @@ chrome.runtime.onConnect.addListener((port) => {
         
             if (message.data.action == "pause")
                 embedded_pause.click();
-            if(message.data.action == "sync_time")
-                set_sync_time(message.data.seek_time);
+
+            if(message.data.action == "sync_time") {
+                console.log(message);
+                // set_sync_time(message.data.seek_time);
+            }
         }
 
         port.postMessage(getData());
