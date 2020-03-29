@@ -82,6 +82,11 @@ function createPlayButton() {
     x.style.display = "none";
     document.body.append(x);
     document.getElementById("netflix_party_play").addEventListener("click", () => {
+        var timeoutPlay = document.getElementsByClassName("nf-big-play-pause-secondary");
+        if(timeoutPlay)
+            timeoutPlay = timeoutPlay[0];
+            if(timeoutPlay)
+                timeoutPlay.click();
         play_pause(true);
     });
 }
