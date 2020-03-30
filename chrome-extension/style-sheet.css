@@ -1,44 +1,98 @@
+* {
+  font-family: "Baloo Thambi 2", cursive;
+}
+
 button {
-    background: none;
-    border: none;
-    color: white;
-    outline: none;
+  position: relative;
+  text-align: center;
+  background: #db4d48;
+  border: none;
+  color: white;
+  outline: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin: 0;
 }
 
 button:hover {
-    cursor: pointer;
-    color: red;
+  cursor: pointer;
+  background: #c84642;
 }
 
 button:active {
-    color: darkred;
+  background: #b4403b;
 }
 
 input {
-    border: none;
-    padding: 5px;
-    background: rgb(46, 46, 46);
-    color: white;
+  border: none;
+  padding: 5px;
+  background: rgb(228, 228, 228);
+  color: black;
 }
 
 input::placeholder {
-    color: white;
+  color: black;
+}
+
+p {
+  color: black;
+  font-size: 15px;
+  padding: 0;
+  margin: 0;
 }
 
 #group_id {
-    width: 100%;
+  width: 100%;
 }
 
 .connection-container {
-    width: 50%;
+  width: 100%;
 }
 
 .connection-container * {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 .icon-container {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+}
+
+button:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  width: 100px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  padding: 5px 5px;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+button .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
 }

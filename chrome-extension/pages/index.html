@@ -1,43 +1,55 @@
-<html style="width:300px; height:300px;">
+<html style="width:300px; height: 250px; border-radius: 5px;">
 
 <head>
     <link rel="stylesheet" type="text/css" href="../style-sheet.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap" rel="stylesheet">
     <script src="../scripts/popup.js"></script>
 </head>
 
-<body style="background: black; color: white;">
-    <h1 style="text-align: center; color: red;">Netflix Party</h1>
-
+<body style="background: white; color: black; margin: 20px;">
+    <h1 style="text-align: center; color: red; font-size: 25px; margin: 0;">NETFLIX SOCIAL</h1>
+    <input type="checkbox" id="is_live" checked="false" />
     <div>
-        <button id="host">host</button>
-        <button id="join">join</button>
-    </div>
+        <div style="margin-bottom: 20px;">
+            <p>Group ID</p>
+            <input style="width: 100%; margin: 0;" id="group_id" placeholder="Group Id" value="netflix-party" />
+        </div>
+        <div id="connection_container">
+            <div class="icon-container" style="padding: 0; text-align: center;">
+                <button id="host" style="font-size: 15px;">
+                    HOST
+                    <span class="tooltiptext">Host a watch party</span>
+                </button>
+                <button id="join" style="font-size: 15px;">
+                    JOIN
+                    <span class="tooltiptext">Join a watch party</span>
+                </button>
+            </div>
+        </div>
 
-    <div class="connection-container">
-        <input id="group_id" placeholder="Group Id" value="netflix-party" />
-        <input type="checkbox" id="is_live" checked="true" />
-
-        <div class="icon-container">
-            <!-- <button id="connect">
-                <i class="material-icons">cloud</i>
-            </button> -->
-            <button id="close">
-                <i class="material-icons">close</i>
-            </button>
-            <button id="play">
-                <i class="material-icons">play_arrow</i>
-            </button>
-            <button id="pause">
-                <i class="material-icons">pause</i>
-            </button>
+        <div class="connection-container" id="message_container" style="display: none;">
+            <div class="icon-container">
+                <button id="close">
+                    <i class="material-icons">exit_to_app</i>
+                    <span class="tooltiptext">Disconnect</span>
+                </button>
+                <button id="play">
+                    <i class="material-icons">play_arrow</i>
+                    <span class="tooltiptext">Play</span>
+                </button>
+                <button id="pause">
+                    <i class="material-icons">pause</i>
+                    <span class="tooltiptext">Pause</span>
+                </button>
+            </div>
+            <!-- <p>Status: <span id="status">Not Connected</span></p> -->
+            <p>Connected users: <span id="live_users">Not Connected</span></p>
         </div>
     </div>
 
-    <p>Connected users: <span id="live_users">Not Connected</span></p>
-    <p style="display: none;">Is Host: <span id="is_host">Not Connected</span></p>
-
     <!-- DEBUG ONLY -->
+    <p style="display: none;">Is Host: <span id="is_host">Not Connected</span></p>
     <p style="display: none;">Time: <span id="time_stamp">Not Connected</span></p>
     <p style="display: none;">Url: <span id="watch_url">Not Connected</span></p>
     <p style="display: none;">User ID: <span id="user_id">Not Connected</span></p>
