@@ -1,7 +1,7 @@
 var _tab;
 var hasInjected = false;
 var time_sync_millis = 0;
-var live = false;
+var live = true;
 
 window.onload = function () {
     setup();
@@ -18,9 +18,7 @@ function _dataModel(local) {
 }
 
 function isLive() {
-    var isLive = document.getElementById('is_live').checked;
-    console.log(isLive);
-    return isLive;
+    return live;
 }
 
 function setup() {

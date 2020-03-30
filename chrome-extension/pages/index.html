@@ -9,10 +9,13 @@
 
 <body style="background: white; color: black; margin: 20px;">
     <h1 style="text-align: center; color: red; font-size: 25px; margin: 0;">NETFLIX SOCIAL</h1>
-    <input type="checkbox" id="is_live" checked="false" />
     <div>
         <div style="margin-bottom: 20px;">
-            <p>Group ID</p>
+            <div style="display: flex; justify-content: space-between;">
+                <p>Group ID</p>
+                <p style="display: inline-flex;"><i id="status_icon" style="color: red; font-size: 12px;"
+                        class="material-icons">fiber_manual_record</i></p>
+            </div>
             <input style="width: 100%; margin: 0;" id="group_id" placeholder="Group Id" value="netflix-party" />
         </div>
         <div id="connection_container">
