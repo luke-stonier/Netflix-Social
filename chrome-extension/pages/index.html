@@ -13,8 +13,11 @@
         <div style="margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between;">
                 <p>Group ID</p>
-                <p style="display: inline-flex;"><i id="status_icon" style="color: red; font-size: 12px;"
-                        class="material-icons">fiber_manual_record</i></p>
+                <div style="display: inline-flex;">
+                    <span id="loading_tag" style="font-size: 15px;"></span>
+                    <i id="status_icon" style="color: red; font-size: 12px; margin-left: 5px; padding-top: 5px;"
+                        class="material-icons">fiber_manual_record</i>
+                </div>
             </div>
             <input style="width: 100%; margin: 0;" id="group_id" placeholder="Group Id" value="netflix-party" />
         </div>
@@ -33,10 +36,6 @@
 
         <div class="connection-container" id="message_container" style="display: none;">
             <div class="icon-container">
-                <button id="close">
-                    <i class="material-icons">exit_to_app</i>
-                    <span class="tooltiptext">Disconnect</span>
-                </button>
                 <button id="play">
                     <i class="material-icons">play_arrow</i>
                     <span class="tooltiptext">Play</span>
@@ -45,10 +44,15 @@
                     <i class="material-icons">pause</i>
                     <span class="tooltiptext">Pause</span>
                 </button>
+                <button id="close">
+                    <i class="material-icons">exit_to_app</i>
+                    <span class="tooltiptext">Disconnect</span>
+                </button>
             </div>
             <!-- <p>Status: <span id="status">Not Connected</span></p> -->
             <p>Connected users: <span id="live_users">Not Connected</span></p>
         </div>
+        <p id="error_tag" style="margin: 10px 0; color: #db4d48; text-align: center;"></p>
     </div>
 
     <!-- DEBUG ONLY -->
