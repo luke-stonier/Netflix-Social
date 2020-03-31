@@ -60,6 +60,8 @@ function setup() {
         sendMessageToBackgroundScript(message);
     });
 
+    // add sync method here (Return last message)
+
     document.getElementById("close").addEventListener("click", () => {
         var message = _dataModel(true);
         message.data.action = "close";

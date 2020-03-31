@@ -1,4 +1,4 @@
-<html style="width:300px; border-radius: 5px;">
+<html style="width:350px; border-radius: 5px;">
 
 <head>
     <link rel="stylesheet" type="text/css" href="../style-sheet.css">
@@ -7,7 +7,7 @@
     <script src="../scripts/popup.js"></script>
 </head>
 
-<body style="background: white; color: black; margin: 20px;">
+<body style="background: white; color: black; margin: 15px 50px;">
     <h1 style="text-align: center; color: red; font-size: 25px; margin: 0;">NETFLIX SOCIAL</h1>
     <div>
         <div>
@@ -34,8 +34,8 @@
             </div>
         </div>
 
-        <div class="connection-container" id="connected_container" style="display: none;">
-            <div class="icon-container" id="message_container">
+        <div class="connection-container" id="message_container" style="display: none;">
+            <div class="icon-container">
                 <button id="play">
                     <i class="material-icons">play_arrow</i>
                     <span class="tooltiptext">Play</span>
@@ -44,11 +44,14 @@
                     <i class="material-icons">pause</i>
                     <span class="tooltiptext">Pause</span>
                 </button>
-            </div>
-
-            <div class="icon-container">
-                <button id="sync">Sync with host</button>
-                <button id="close">Disconnect</button>
+                <button id="sync">
+                    <i class="material-icons">sync</i>
+                    <span class="tooltiptext">Sync to host</span>
+                </button>
+                <button id="close">
+                    <i class="material-icons">exit_to_app</i>
+                    <span class="tooltiptext">Disconnect</span>
+                </button>
             </div>
 
             <p>Users Watching: <span id="live_users">Not Connected</span></p>
