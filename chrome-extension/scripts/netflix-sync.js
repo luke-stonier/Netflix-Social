@@ -42,7 +42,9 @@ function getVideoDetails() {
 
 function getCurrentPlayTime() {
     if (!player) { console.log("no player attached"); return; }
-    setHiddenDetails('current_time', player.getCurrentTime());
+    var playTime = player.getCurrentTime();
+    console.log(`set current time to ${playTime}`);
+    setHiddenDetails('current_time', playTime);
 }
 
 function syncTime(time) {
