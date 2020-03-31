@@ -34,6 +34,11 @@ input::placeholder {
   color: black;
 }
 
+input:disabled {
+  color: gray;
+  background: rgb(180, 180, 180);
+}
+
 p {
   color: black;
   font-size: 15px;
