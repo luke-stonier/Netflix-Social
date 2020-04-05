@@ -18,9 +18,7 @@ chrome.runtime.onConnect.addListener((port) => {
             if (message.data.action == "pause")
                 embedded_pause.click();
 
-            if (message.data.action == "sync") {
-                // for now nada
-            }
+            if (message.data.action == "sync") {}
 
             if(message.data.action == "sync_time") {
                 console.log(message);
