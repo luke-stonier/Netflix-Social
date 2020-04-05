@@ -43,15 +43,12 @@ function getVideoDetails() {
 function getCurrentPlayTime() {
     if (!player) { console.log("no player attached"); return; }
     var playTime = player.getCurrentTime();
-    console.log(`set current time to ${playTime}`);
     setHiddenDetails('current_time', playTime);
 }
 
 function syncTime(time) {
     if (!player) { console.log("no player attached"); return; }
-    console.log(`sync time to ${time} (current: ${player.getCurrentTime()})`);
     player.seek(time);
-    console.log(`sync time to ${time} (new: ${player.getCurrentTime()})`);
 }
 
 function setHiddenDetails(id, text) {
