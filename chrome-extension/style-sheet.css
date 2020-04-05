@@ -107,3 +107,18 @@ button .tooltiptext::after {
   border-style: solid;
   border-color: #555 transparent transparent transparent;
 }
+
+.support-us {
+  user-select: none;
+  background: white;
+  color: black;
+  border: 1px solid grey;
+  border-radius: 25px;
+  padding: 5px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.support-us:hover {
+  background: whitesmoke;
+}

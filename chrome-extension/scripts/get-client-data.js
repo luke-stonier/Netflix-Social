@@ -11,11 +11,16 @@ chrome.runtime.onConnect.addListener((port) => {
         var embedded_pause = document.getElementById("netflix_party_pause");
         if (!embedded_play || !embedded_pause) { return; }
         if (message.data) {
+            console.log(message.data.action);
             if (message.data.action == "play")
                 embedded_play.click();
         
             if (message.data.action == "pause")
                 embedded_pause.click();
+
+            if (message.data.action == "sync") {
+                // for now nada
+            }
 
             if(message.data.action == "sync_time") {
                 console.log(message);
