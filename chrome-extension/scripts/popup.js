@@ -73,8 +73,7 @@ function setup() {
     });
 
     document.getElementById("support_us").addEventListener("click", () => {
-        console.log("support");
-        // open in new tab - "https://www.patreon.com/netflixsocial"
+        window.open("https://www.patreon.com/netflixsocial", '_blank');
     });
 }
 
