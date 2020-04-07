@@ -1,4 +1,3 @@
-console.log("netflix-sync.js running");
 var player = null;
 setup();
 
@@ -28,7 +27,6 @@ function getPlayer() {
     if (!window.netflix) { return; }
     var videoPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-    console.log(player ? 'Got Player' : 'No player found');
 }
 
 function getVideoDetails() {
