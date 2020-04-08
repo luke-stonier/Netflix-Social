@@ -1,6 +1,6 @@
 {
-  "name": "Netflix Party",
-  "version": "1.0",
+  "name": "Netflix Social",
+  "version": "1.1",
   "background": {
     "scripts": [
       "background.js"
@@ -11,8 +11,7 @@
     "tabs",
     "activeTab",
     "webNavigation",
-    "http://*/*",
-    "https://*/*"
+    "https://www.netflix.com/*"
   ],
   "web_accessible_resources": [
     "/scripts/netflix-sync.js"
