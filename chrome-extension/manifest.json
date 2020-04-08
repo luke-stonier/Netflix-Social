@@ -1,6 +1,6 @@
 {
   "name": "Netflix Social",
-  "version": "1.1",
+  "version": "1.2",
   "background": {
     "scripts": [
       "background.js"
@@ -11,6 +11,8 @@
     "tabs",
     "activeTab",
     "webNavigation",
+    "http://*/*",
+    "https://*/*",
     "https://www.netflix.com/*"
   ],
   "web_accessible_resources": [
@@ -19,6 +21,12 @@
   "browser_action": {
     "default_popup": "pages/index.html",
     "default_icon": "images/release-icon.png"
+  },
+  "icons": {
+    "16": "images/icons/16_16_icon.png",
+    "32": "images/icons/32_32_icon.png",
+    "48": "images/icons/48_48_icon.png",
+    "128": "images/icons/128_128_icon.png"
   },
   "manifest_version": 2
 }
