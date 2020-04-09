@@ -2,8 +2,8 @@ var data = getData();
 
 //var port = chrome.runtime.connect({name: 'background-netflix-sync'});
 chrome.runtime.onConnect.addListener((port) => {
-    if(port.onMessage.hasListeners()) { return; }
-    port.onMessage.addListener(function(message) {
+    if (port.onMessage.hasListeners()) { return; }
+    port.onMessage.addListener(function (message) {
         if (!message) { return; }
 
         var embedded_play = document.getElementById("netflix_party_play");
@@ -12,15 +12,22 @@ chrome.runtime.onConnect.addListener((port) => {
         if (message.data) {
             if (message.data.action == "play")
                 embedded_play.click();
-        
+
             if (message.data.action == "pause")
                 embedded_pause.click();
 
-            if (message.data.action == "sync") {}
+            // if (message.data.action == "sync")
+            //     console.log("sync");
 
-            if(message.data.action == "sync_time") {
-                set_sync_time(message.data.seek_time);
+            if (message.data.action == "disconnect") {
+                var x = document.getElementById('netflix_party_disconnect');
+                if (!x) { return; }
+                x.click();
+                return;
             }
+
+            if (message.data.action == "sync_time")
+                set_sync_time(message.data.seek_time);
         }
 
         port.postMessage(getData());
@@ -43,10 +50,7 @@ function getData() {
         seriesName = watching[0].innerText;
         episodeIndicator = watching[1].innerText;
         episodeName = watching[2].innerText;
-    } else {
-        console.log("couldn't find watching info");
     }
-
     if (!embedded_get_data) { return; }
     embedded_get_data.click();
     var current_time = document.getElementById("current_time").innerText;
