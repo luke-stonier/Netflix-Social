@@ -43,6 +43,7 @@ function getVideoDetails() {
 }
 
 function getCurrentPlayTime() {
+    getPlayer();
     if (!player) { console.log("no player attached"); return; }
     var playTime = player.getCurrentTime();
     setHiddenDetails('current_time', playTime);
