@@ -1,6 +1,6 @@
 {
   "name": "Netflix Social",
-  "version": "1.7",
+  "version": "1.8",
   "background": {
     "scripts": [
       "background.js"
@@ -29,4 +29,3 @@
   },
   "manifest_version": 2
 }
-

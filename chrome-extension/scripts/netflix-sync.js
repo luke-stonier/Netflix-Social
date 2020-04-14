@@ -1,3 +1,4 @@
+console.log("NETFLIX-SYNC INJECT");
 var player = null;
 var lastMessage;
 setup();

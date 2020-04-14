@@ -41,16 +41,6 @@ function set_sync_time(time) {
 
 function getData() {
     var embedded_get_data = document.getElementById("netflix_party_get_data");
-    var watching = document.getElementsByClassName("ellipsize-text");
-    var seriesName;
-    var episodeIndicator;
-    var episodeName;
-    if (watching && watching.length > 0) {
-        watching = watching[0].children;
-        seriesName = watching[0].innerText;
-        episodeIndicator = watching[1].innerText;
-        episodeName = watching[2].innerText;
-    }
     if (!embedded_get_data) { return; }
     embedded_get_data.click();
     var current_time = document.getElementById("current_time").innerText;
@@ -58,9 +48,6 @@ function getData() {
     return {
         data: {
             seek_time: current_time,
-            seriesName: seriesName,
-            episodeIndicator: episodeIndicator,
-            episodeName: episodeName
         }
     };
 }
