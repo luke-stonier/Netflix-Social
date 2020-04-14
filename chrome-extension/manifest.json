@@ -1,6 +1,6 @@
 {
   "name": "Netflix Social",
-  "version": "1.3",
+  "version": "1.7",
   "background": {
     "scripts": [
       "background.js"
@@ -11,8 +11,7 @@
     "tabs",
     "activeTab",
     "webNavigation",
-    "http://*/*",
-    "https://*/*",
+    "https://*.herokuapp.com/*",
     "https://www.netflix.com/*"
   ],
   "web_accessible_resources": [
@@ -20,7 +19,7 @@
   ],
   "browser_action": {
     "default_popup": "pages/index.html",
-    "default_icon": "images/release-icon.png"
+    "default_icon": "images/icons/32_32_icon.png"
   },
   "icons": {
     "16": "images/icons/16_16_icon.png",
