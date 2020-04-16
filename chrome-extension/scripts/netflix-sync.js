@@ -11,6 +11,7 @@ function setup() {
     createPauseButton();
     createMessageBubble();
     createDisconnectButton();
+    createMessageBox();
     if (!player) { console.log("no player"); return; }
     getData();
 }
@@ -58,9 +59,9 @@ function syncTime(time) {
 function setMessage(message) {
     lastMessage = message;
     if (message == "") {
-        document.getElementById('netflix_party_message_bubble').style.display="none";
+        document.getElementById('netflix_party_message_bubble').style.display = "none";
     } else {
-        document.getElementById('netflix_party_message_bubble').style.display="block";
+        document.getElementById('netflix_party_message_bubble').style.display = "block";
     }
 
     document.getElementById('netflix_party_message_bubble').innerText = message;
@@ -80,6 +81,34 @@ function setHiddenDetails(id, text) {
     x.innerText = text;
     x.style.display = "none";
     document.body.append(x);
+}
+
+function createMessageBox() {
+    var wrapper = document.getElementsByClassName("nf-kb-nav-wrapper")[0];
+    wrapper.style.display = "flex";
+    var container = document.getElementsByClassName("sizing-wrapper")[0];
+    container.style.right = "20%";
+
+    var x = document.getElementById("netflix_party_message_box");
+    if (x) return;
+    x = document.createElement("div");
+    x.id = "netflix_party_message_box";
+    x.style.position = "absolute";
+    x.style.top = "0px";
+    x.style.bottom = "0px";
+    x.style.right = "0px";
+    x.style.left = "80%";
+    x.style.zIndex = 1;
+    x.style.overflow = "hidden";
+    x.style.background = "#1a1a1a";
+    x.innerHTML = `<img style="width: 100%;" src="https://netflix-social.com/images/promo_large.png" />`;
+    wrapper.append(x);
+    var container = document.createElement("div");
+    container.id = "netflix_party_chat_container";
+    container.style.width = "100%";
+    container.style.height = "100%";
+    container.innerHTML = "";
+    x.append(container);
 }
 
 function createMessageBubble() {
