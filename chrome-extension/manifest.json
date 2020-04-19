@@ -1,6 +1,6 @@
 {
   "name": "Netflix Social",
-  "version": "1.8",
+  "version": "1.9",
   "background": {
     "scripts": [
       "background.js"
