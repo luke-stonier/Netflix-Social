@@ -14,6 +14,12 @@
     "https://*.herokuapp.com/*",
     "https://www.netflix.com/*"
   ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.netflix.com/*"],
+      "css": ["./netflix-party-css.css"]
+    }
+  ],
   "web_accessible_resources": [
     "/scripts/netflix-sync.js"
   ],

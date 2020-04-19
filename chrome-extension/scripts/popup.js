@@ -40,10 +40,12 @@ function setup() {
 
     document.getElementById("host").addEventListener("click", () => {
         var groupId = document.getElementById("group_id").value;
+        var displayName = document.getElementById("display_name").value;
 
         var message = _dataModel(true);
         message.data.action = "connect";
         message.data.params.groupId = groupId;
+        message.data.params.displayName = displayName;
         message.data.params.host = true;
         message.data.params.live = isLive();    // debug
         sendMessageToBackgroundScript(message);
@@ -51,10 +53,12 @@ function setup() {
 
     document.getElementById("join").addEventListener("click", () => {
         var groupId = document.getElementById("group_id").value;
+        var displayName = document.getElementById("display_name").value;
 
         var message = _dataModel(true);
         message.data.action = "connect";
         message.data.params.groupId = groupId;
+        message.data.params.displayName = displayName;
         message.data.params.host = false;
         message.data.params.live = isLive();    // debug
         sendMessageToBackgroundScript(message);
