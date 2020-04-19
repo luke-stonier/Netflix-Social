@@ -35,6 +35,11 @@ chrome.runtime.onConnect.addListener((port) => {
                 AddMessageToChat(addedMessage, "Server", false, true);
             }
 
+            if (message.data.action == "remove") {
+                var addedMessage = `${message.data.displayName} left the group`;
+                AddMessageToChat(addedMessage, "Server", false, true);
+            }
+
             // if (message.data.action == "sync")
             //     console.log("sync");
 
