@@ -7,6 +7,9 @@ createMessageButtons();
 chrome.runtime.onConnect.addListener((port) => {
     openPort = port;
     if (port.onMessage.hasListeners()) { return; }
+    port.onDisconnect.addListener(() => {
+        location.reload();
+    });
     port.onMessage.addListener(function (message) {
         if (!message) { return; }
 
