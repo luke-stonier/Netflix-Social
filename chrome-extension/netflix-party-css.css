@@ -1,10 +1,7 @@
 /* NETFLIX STYLES */
-.nf-kb-nav-wrapper {
-    display: flex;
-}
-
-.sizing-wrapper {
+.NFPlayer {
     right: 15% !important;
+    width: auto !important;
 }
 
 /* width */

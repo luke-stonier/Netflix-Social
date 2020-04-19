@@ -68,13 +68,14 @@ function setHiddenDetails(id, text) {
 }
 
 function createMessageBox() {
-    if (document.getElementsByClassName("nf-kb-nav-wrapper").length == 0)
+    if (document.getElementsByClassName("AkiraPlayer").length == 0)
         return;
 
-    var wrapper = document.getElementsByClassName("nf-kb-nav-wrapper")[0];
-    wrapper.style.display = "flex";
-    var container = document.getElementsByClassName("sizing-wrapper")[0];
+    var wrapper = document.getElementsByClassName("AkiraPlayer")[0];
+    // wrapper.style.display = "flex";
+    var container = document.getElementsByClassName("NFPlayer")[0];
     container.style.right = "15%";
+    container.style.width = "auto";
 
     var x = document.getElementById("netflix_party_message_box");
     if (x) return;
