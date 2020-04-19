@@ -107,9 +107,9 @@ function createMessageBox() {
     var message_input = document.createElement("div");
     message_input.innerHTML = `<div style="width: 100%; display: flex; justify-content: space-between;">
         <input id="netflix_party_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
-        <button disabled id="netflix_party_send_message_button" style="position: relative;
+        <button id="netflix_party_send_message_button" style="position: relative;
         text-align: center;
-        background: gray;
+        background: #db4d48;
         border: none;
         color: white;
         outline: none;
@@ -120,18 +120,31 @@ function createMessageBox() {
     x.append(container);
     x.append(message_input);
 
-    document.getElementById("netflix_party_send_message_button").addEventListener("click", (event) => {
-        var x = document.getElementById("netflix_party_message_sync");
-        var y = document.getElementById("netflix_party_chat_message");
-        if (!x || !y) return;
-        if (y.value == "" || !y.value) {
-            // show error.
-            return;
+    document.onkeydown = function (e) {
+        e = e || window.event;
+        switch (e.which || e.keyCode) {
+            case 13:
+                sendMessage();
+                break;
         }
-        x.innerText = y.value;
-        y.value = "";
-        x.click();
+    }
+
+    document.getElementById("netflix_party_send_message_button").addEventListener("click", (event) => {
+        sendMessage();
     });
+}
+
+function sendMessage() {
+    var x = document.getElementById("netflix_party_message_sync");
+    var y = document.getElementById("netflix_party_chat_message");
+    if (!x || !y) return;
+    if (y.value == "" || !y.value) {
+        // show error.
+        return;
+    }
+    x.innerText = y.value;
+    y.value = "";
+    x.click();
 }
 
 function createGetDataButton() {
