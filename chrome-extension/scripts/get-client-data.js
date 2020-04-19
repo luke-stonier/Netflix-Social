@@ -5,8 +5,8 @@ createMessageButtons();
 
 //var port = chrome.runtime.connect({name: 'background-netflix-sync'});
 chrome.runtime.onConnect.addListener((port) => {
-    if (port.onMessage.hasListeners()) { return; }
     openPort = port;
+    if (port.onMessage.hasListeners()) { return; }
     port.onMessage.addListener(function (message) {
         if (!message) { return; }
 
@@ -53,14 +53,14 @@ chrome.runtime.onConnect.addListener((port) => {
 
 function createMessageButtons() {
     var messageSync = document.getElementById("netflix_party_message_sync");
-    if(messageSync) return;
+    if (messageSync) return;
 
     console.log("Create message sync button.");
     var messageTrigger = document.createElement("button");
     messageTrigger.id = "netflix_party_message_sync";
     messageTrigger.style.display = "none";
     messageTrigger.addEventListener("click", (event) => {
-        var chatToSend = event.toElement.innerText;        
+        var chatToSend = event.toElement.innerText;
         var data = {
             action: 'message',
             message: chatToSend
