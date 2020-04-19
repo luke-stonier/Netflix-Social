@@ -1,6 +1,7 @@
 console.log("NETFLIX-SYNC INJECT");
 var player = null;
 var lastMessage;
+var connected = false;
 setup();
 
 function setup() {
@@ -9,8 +10,8 @@ function setup() {
     createSyncButton();
     createPlayButton();
     createPauseButton();
-    createMessageBubble();
     createDisconnectButton();
+    createConnectButton();
     createMessageBox();
     if (!player) { console.log("no player"); return; }
     getData();
@@ -55,22 +56,6 @@ function syncTime(time) {
     player.seek(time);
 }
 
-function setMessage(message) {
-    lastMessage = message;
-    if (message == "") {
-        document.getElementById('netflix_party_message_bubble').style.display = "none";
-    } else {
-        document.getElementById('netflix_party_message_bubble').style.display = "block";
-    }
-
-    document.getElementById('netflix_party_message_bubble').innerText = message;
-    if (!message) return;
-    setTimeout(() => {
-        if (message == lastMessage) {
-            setMessage("");
-        }
-    }, 3000);
-}
 
 function setHiddenDetails(id, text) {
     var x = document.getElementById(id);
@@ -122,7 +107,7 @@ function createMessageBox() {
     var message_input = document.createElement("div");
     message_input.innerHTML = `<div style="width: 100%; display: flex; justify-content: space-between;">
         <input id="netflix_party_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
-        <button id="netflix_party_send_message_button" style="position: relative;
+        <button disabled id="netflix_party_send_message_button" style="position: relative;
         text-align: center;
         background: #db4d48;
         border: none;
@@ -147,28 +132,6 @@ function createMessageBox() {
         y.value = "";
         x.click();
     });
-}
-
-function createMessageBubble() {
-    var x = document.getElementById("netflix_party_message_bubble");
-    if (x) return;
-    x = document.createElement("p");
-    x.id = "netflix_party_message_bubble";
-    x.style.color = "white";
-    x.style.zIndex = 10000;
-    x.style.position = "absolute";
-    x.style.textAlign = "center";
-    x.style.fontSize = "20px";
-    x.style.background = "rgba(255,255,255,0.42)";
-    x.style.padding = "5px";
-    x.style.borderRadius = "8px";
-    x.style.top = "90%";
-    x.style.left = "0";
-    x.style.right = "0";
-    x.style.width = "40%";
-    x.style.margin = "auto";
-    x.style.display = "none";
-    document.body.append(x);
 }
 
 function createGetDataButton() {
@@ -240,6 +203,21 @@ function createPauseButton() {
     });
 }
 
+function createConnectButton() {
+    var x = document.getElementById("netflix_party_connect");
+    if (x) return;
+    x = document.createElement("button");
+    x.id = "netflix_party_connect";
+    x.style.display = "none";
+    document.body.append(x);
+    document.getElementById("netflix_party_connect").addEventListener("click", () => {
+        console.log("connected");
+        document.getElementById("netflix_party_send_message_button").disabled = false;
+        document.getElementById("netflix_party_send_message_button").style.opacity = 1;
+        connected = true;
+    });
+}
+
 function createDisconnectButton() {
     var x = document.getElementById("netflix_party_disconnect");
     if (x) return;
@@ -249,5 +227,8 @@ function createDisconnectButton() {
     document.body.append(x);
     document.getElementById("netflix_party_disconnect").addEventListener("click", () => {
         play_pause(false);
+        document.getElementById("netflix_party_send_message_button").disabled = true;
+        document.getElementById("netflix_party_send_message_button").style.opacity = 0.5;
+        connected = false;
     });
 }

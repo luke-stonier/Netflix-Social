@@ -33,6 +33,10 @@ chrome.runtime.onConnect.addListener((port) => {
             }
 
             if (message.data.action == "added") {
+                console.log("added");
+                var x = document.getElementById('netflix_party_connect');
+                if (!x) { return; }
+                x.click();
                 var addedMessage = `${message.data.displayName} joined the group`;
                 AddMessageToChat(addedMessage, "Server", false, true);
                 return;
