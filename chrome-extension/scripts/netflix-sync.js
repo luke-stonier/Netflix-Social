@@ -109,7 +109,7 @@ function createMessageBox() {
         <input id="netflix_party_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
         <button disabled id="netflix_party_send_message_button" style="position: relative;
         text-align: center;
-        background: #db4d48;
+        background: gray;
         border: none;
         color: white;
         outline: none;
@@ -213,7 +213,7 @@ function createConnectButton() {
     document.getElementById("netflix_party_connect").addEventListener("click", () => {
         console.log("connected");
         document.getElementById("netflix_party_send_message_button").disabled = false;
-        document.getElementById("netflix_party_send_message_button").style.opacity = 1;
+        document.getElementById("netflix_party_send_message_button").style.background = "#db4d48";
         connected = true;
     });
 }
@@ -228,7 +228,7 @@ function createDisconnectButton() {
     document.getElementById("netflix_party_disconnect").addEventListener("click", () => {
         play_pause(false);
         document.getElementById("netflix_party_send_message_button").disabled = true;
-        document.getElementById("netflix_party_send_message_button").style.opacity = 0.5;
+        document.getElementById("netflix_party_send_message_button").style.background = "gray";
         connected = false;
     });
 }
