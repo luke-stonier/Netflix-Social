@@ -27,17 +27,21 @@ chrome.runtime.onConnect.addListener((port) => {
                 AddMessageToChat(`Host paused the video`, "Server", false, true);
             }
 
-            if (message.data.action == "message")
+            if (message.data.action == "message") {
                 AddMessageToChat(message.data.message, message.data.displayName, message.data.isClient, false);
+                return;
+            }
 
             if (message.data.action == "added") {
                 var addedMessage = `${message.data.displayName} joined the group`;
                 AddMessageToChat(addedMessage, "Server", false, true);
+                return;
             }
 
             if (message.data.action == "remove") {
                 var addedMessage = `${message.data.displayName} left the group`;
                 AddMessageToChat(addedMessage, "Server", false, true);
+                return;
             }
 
             // if (message.data.action == "sync")
