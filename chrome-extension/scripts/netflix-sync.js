@@ -255,5 +255,6 @@ function createDisconnectButton() {
         container.style.right = "0";
         container.style.width = "100%";
         console.log(container);
+        // clear chat....
     });
 }
