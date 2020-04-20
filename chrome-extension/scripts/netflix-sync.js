@@ -81,6 +81,7 @@ function createMessageBox() {
     if (x) return;
     x = document.createElement("div");
     x.id = "netflix_party_message_box";
+    x.style.display = "none";
     x.style.position = "absolute";
     x.style.top = "0px";
     x.style.bottom = "0px";
@@ -228,6 +229,8 @@ function createConnectButton() {
         console.log("connected");
         document.getElementById("netflix_party_send_message_button").disabled = false;
         document.getElementById("netflix_party_send_message_button").style.background = "#db4d48";
+        console.log(document.getElementById("netflix_party_message_box"));
+        document.getElementById("netflix_party_message_box").style.display="flex";
         connected = true;
         var container = document.getElementsByClassName("NFPlayer")[0];
         container.style.right = "15%";
@@ -246,6 +249,8 @@ function createDisconnectButton() {
         play_pause(false);
         document.getElementById("netflix_party_send_message_button").disabled = true;
         document.getElementById("netflix_party_send_message_button").style.background = "gray";
+        console.log(document.getElementById("netflix_party_message_box"));
+        document.getElementById("netflix_party_message_box").style.display="none";
         connected = false;
         var container = document.getElementsByClassName("NFPlayer")[0];
         container.style.right = "0";
