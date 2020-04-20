@@ -229,6 +229,9 @@ function createConnectButton() {
         document.getElementById("netflix_party_send_message_button").disabled = false;
         document.getElementById("netflix_party_send_message_button").style.background = "#db4d48";
         connected = true;
+        var container = document.getElementsByClassName("NFPlayer")[0];
+        container.style.right = "15%";
+        container.style.width = "auto";
     });
 }
 
@@ -244,5 +247,8 @@ function createDisconnectButton() {
         document.getElementById("netflix_party_send_message_button").disabled = true;
         document.getElementById("netflix_party_send_message_button").style.background = "gray";
         connected = false;
+        var container = document.getElementsByClassName("NFPlayer")[0];
+        container.style.right = "0";
+        container.style.width = "100%";
     });
 }
