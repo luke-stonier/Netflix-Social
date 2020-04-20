@@ -1,6 +1,6 @@
 {
   "name": "Netflix Social",
-  "version": "2.0",
+  "version": "2.1",
   "background": {
     "scripts": [
       "background.js"
@@ -12,7 +12,8 @@
     "activeTab",
     "webNavigation",
     "https://*.herokuapp.com/*",
-    "https://www.netflix.com/*"
+    "https://www.netflix.com/*",
+    "https://www.netflix-social.com/*"
   ],
   "web_accessible_resources": [
     "/scripts/netflix-sync.js"

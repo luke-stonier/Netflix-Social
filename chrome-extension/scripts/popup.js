@@ -22,6 +22,42 @@ function isLive() {
 }
 
 function setup() {
+    document.getElementById('host').disabled=true;
+    document.getElementById('join').disabled=true;
+
+    chrome.management.getSelf((res) => {
+        var isDev = false;
+        var versionId = `Version ${res.version}`;
+        if (res.installType == "development") {
+            isDev = true;
+            document.getElementById('host').disabled=false;
+            document.getElementById('join').disabled=false;
+            versionId += `-dev`;
+        }
+        document.getElementById('version-view').innerText = versionId;
+        if (isDev) return;
+        const http = new XMLHttpRequest();
+        const url = "https://netflix-social.com/version.php";
+        http.open("GET", url);
+        http.send();
+        http.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var version = http.responseText;
+                if (version != versionId) {
+                    document.getElementById('version-view').style.color="red";
+                    document.getElementById('version-view').innerText = `${versionId} (NOT UP TO DATE)`;
+                    document.getElementById('host').disabled=true;
+                    document.getElementById('join').disabled=true;
+                } else {
+                    document.getElementById('version-view').style.color="green";
+                    document.getElementById('version-view').innerText = `${versionId} (UP TO DATE)`;
+                    document.getElementById('host').disabled=false;
+                    document.getElementById('join').disabled=false;
+                }
+            }
+        };
+    });
+
     var wakeMessage = _dataModel(true);
     wakeMessage.data.action = "wake";
     sendMessageToBackgroundScript(wakeMessage);
