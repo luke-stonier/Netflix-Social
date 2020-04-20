@@ -9,8 +9,7 @@ chrome.runtime.onConnect.addListener((port) => {
     openPort = port;
     if (port.onMessage.hasListeners()) { return; }
     port.onDisconnect.addListener(() => {
-        if (connected)
-            location.reload();
+        location.reload();
     });
     port.onMessage.addListener(function (message) {
         if (!message) { return; }
@@ -34,6 +33,11 @@ chrome.runtime.onConnect.addListener((port) => {
                 return;
             }
 
+            if (message.data.action == "open-chat") {
+                console.log("OPEN CHAT");
+                return;
+            }
+
             if (message.data.action == "added") {
                 console.log("added");
                 connected = true;
@@ -52,7 +56,7 @@ chrome.runtime.onConnect.addListener((port) => {
             }
 
             // if (message.data.action == "sync")
-            //     console.log("sync");
+            //     console.log("sync message");
 
             if (message.data.action == "disconnect") {
                 connected = false;
@@ -144,6 +148,7 @@ function getData() {
     var embedded_get_data = document.getElementById("netflix_party_get_data");
     if (!embedded_get_data) { return; }
     embedded_get_data.click();
+    if (!document.getElementById("current_time")) return;
     var current_time = document.getElementById("current_time").innerText;
 
     return {

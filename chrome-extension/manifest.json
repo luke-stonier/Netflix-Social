@@ -3,6 +3,7 @@
   "version": "2.1",
   "background": {
     "scripts": [
+      "old-background.js",
       "background.js"
     ],
     "persistent": false
