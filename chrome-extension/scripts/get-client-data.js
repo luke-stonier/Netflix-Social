@@ -1,6 +1,7 @@
 console.log("CLIENT-DATA.JS");
 var openPort;
 var data = getData();
+var connected = false;
 createMessageButtons();
 
 //var port = chrome.runtime.connect({name: 'background-netflix-sync'});
@@ -8,7 +9,8 @@ chrome.runtime.onConnect.addListener((port) => {
     openPort = port;
     if (port.onMessage.hasListeners()) { return; }
     port.onDisconnect.addListener(() => {
-        location.reload();
+        if (connected)
+            location.reload();
     });
     port.onMessage.addListener(function (message) {
         if (!message) { return; }
@@ -34,6 +36,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
             if (message.data.action == "added") {
                 console.log("added");
+                connected = true;
                 var x = document.getElementById('netflix_party_connect');
                 if (!x) { return; }
                 x.click();
@@ -52,6 +55,7 @@ chrome.runtime.onConnect.addListener((port) => {
             //     console.log("sync");
 
             if (message.data.action == "disconnect") {
+                connected = false;
                 var x = document.getElementById('netflix_party_disconnect');
                 if (!x) { return; }
                 x.click();
