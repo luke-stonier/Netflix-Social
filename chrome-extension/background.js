@@ -22,7 +22,7 @@ var isConnected = false;
 var lastServerMessage;
 var groupId;
 var displayName;
-var userId;
+var user_id;
 
 chrome.runtime.onInstalled.addListener(function () {
     // runs when the extension has been installed
