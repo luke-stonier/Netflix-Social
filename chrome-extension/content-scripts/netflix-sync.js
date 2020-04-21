@@ -71,7 +71,7 @@ function GetPlaybackTime() {
 function SeekToPoint() {
     getPlayer();
     if (!player) return;
-    var comp = document.getElementById(playback_id);
+    var comp = document.getElementById(seek_id);
     player.seek(comp.innerText);
 }
 
