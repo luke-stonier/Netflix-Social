@@ -12,7 +12,6 @@ chrome.runtime.onConnect.addListener((port) => {
         portConnected = false;
     });
     port.onMessage.addListener(function (message) {
-        console.log(message);
         if (!message) return;
 
         if (message.data.action == "get_sync_time")
@@ -23,6 +22,9 @@ chrome.runtime.onConnect.addListener((port) => {
 
         if (message.data.action == "pause_video")
             PauseVideo();
+        
+        if (message.data.action == "seek_time")
+            console.log(`sync to time ${message.data.seek_time}`);
     });
 });
 

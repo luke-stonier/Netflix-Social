@@ -23,6 +23,15 @@ var lastServerMessage;
 var groupId;
 var displayName;
 var user_id;
+var socket;
+
+function dataModel(_data) {
+    return {
+        sender: user_id,
+        data: _data
+    };
+}
+
 
 chrome.runtime.onInstalled.addListener(function () {
     // runs when the extension has been installed
@@ -113,27 +122,27 @@ function processPopupMessage(message) {
                 connectToGroup(resp.server, groupId, displayName, "", 0);
 
         });
-        return;
     }
 
     if (message.data.action == "close") {
-        return;
+        DisconnectFromSocket();
     }
 
 
     // Connected Messages
     if (message.data.action == "sync") {
-        return;
     }
 
     if (message.data.action == "play") {
-        sendMessageToNetflixPage({ data: { action: 'play_video' } });
-        return;
+        var message = dataModel({ action: 'play_video' });
+        sendMessageToNetflixPage(message);
+        sendSocketMessage(message);
     }
 
     if (message.data.action == "pause") {
-        sendMessageToNetflixPage({ data: { action: 'pause_video' } });
-        return;
+        var message = dataModel({ action: 'pause_video' });
+        sendMessageToNetflixPage(message);
+        sendSocketMessage(message);
     }
 }
 
@@ -161,6 +170,18 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 }
 
+function sendSocketMessage(data) {
+    if (!socket || socket.readyState != 1) { return; }
+    data = JSON.stringify(data);
+    socket.send(data);
+}
+
+function processSocketMessage(message) {
+    if (!message) return;
+    var isServerMessage = message.sender == "server";
+    isServerMessage ? processServerMessage(message) : processClientMessage();
+}
+
 /*
 SAMPLE SERVER MESSAGE
 {
@@ -176,23 +197,37 @@ SAMPLE SERVER MESSAGE
 }
 */
 
-function processSocketMessage(message) {
-    if (!message) return;
-    var isServerMessage = message.sender == "server";
-    isServerMessage ? processServerMessage(message) : processClientMessage();
-}
-
 function processServerMessage(message) {
-    lastServerMessage = message;
     user_id = (user_id || message.data.user_id);
     if (message.data.user_id != user_id) return;
+    lastServerMessage = message;
     setPopupScreen();
     if (message.data.url)
         SyncUrl(message.data.url);
 }
 
+/*
+SAMPLE CLIENT MESSAGE
+{
+    "sender":"EGEPx46/1RKdHSH6jtuIxQ==",
+    "data":{
+        "action":"set_sync_time",
+        "url":"/81130223?trackId=14170286",
+        "seek_time":"2101001"
+    }
+}
+*/
+
 function processClientMessage(message) {
     console.log(message);
+    if (message.sender == user_id) return;
+    sendMessageToNetflixPage(message);
+}
+
+function DisconnectFromSocket() {
+    if (!socket || socket.readyState != 1)
+        return;
+    socket.close();
 }
 
 function SyncUrl(url) {
