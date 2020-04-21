@@ -148,7 +148,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.addEventListener('message', function (event) {
-        processSocketMessage(event.data);
+        processSocketMessage(JSON.parse(event.data));
     });
 
     socket.addEventListener('error', function (event) {
@@ -161,42 +161,49 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 }
 
+/*
+SAMPLE SERVER MESSAGE
+{
+    "sender":"server",
+    "data":{
+        "user_id":"PeflhqFizmfg7BZG8RxZnA==",
+        "displayName":"text",
+        "isHost":true,"
+        url":"/81130223?trackId=14170286",
+        "client_count":1,
+        "seek_time":"420691"
+    }
+}
+*/
+
 function processSocketMessage(message) {
     if (!message) return;
-    console.log(message);
-    message = JSON.parse(message);
     var isServerMessage = message.sender == "server";
-    if (isServerMessage) {
-        /*
-        SAMPLE SERVER MESSAGE
-        {
-            "sender":"server",
-            "data":{
-                "user_id":"PeflhqFizmfg7BZG8RxZnA==",
-                "displayName":"text",
-                "isHost":true,"
-                url":"/81130223?trackId=14170286",
-                "client_count":1,
-                "seek_time":"420691"
-            }
-        }
-        */
+    isServerMessage ? processServerMessage(message) : processClientMessage();
+}
 
-        user_id = user_id ? user_id : message.data.user_id;
+function processServerMessage(message) {
+    lastServerMessage = message;
+    user_id = (user_id || message.data.user_id);
+    if (message.data.user_id != user_id) return;
+    setPopupScreen();
+    if (message.data.url)
+        SyncUrl(message.data.url);
+}
 
-        lastServerMessage = message;
-        setPopupScreen();
-        getNetflixTab((t) => {
-            var _url = `https://www.netflix.com/watch${message.data.url}`;
-            if (!t)
-                openNetflixTab(_url, (t) => { netflixTab = t });
+function processClientMessage(message) {
+    console.log(message);
+}
 
-            if (t && t.url.indexOf(message.data.url) == -1)
-                chrome.tabs.update(netflixTab.id, { url: _url }, function (tab) { netflixTab = tab; });
-        })
-    } else {
-        // client message ie chat/play/pause
-    }
+function SyncUrl(url) {
+    getNetflixTab((t) => {
+        var _url = `https://www.netflix.com/watch${url}`;
+        if (!t)
+            openNetflixTab(_url, (t) => { netflixTab = t });
+
+        if (t && t.url.indexOf(url) == -1)
+            chrome.tabs.update(netflixTab.id, { url: _url }, function (tab) { netflixTab = tab; });
+    });
 }
 
 function ConnectedToSocket() {
