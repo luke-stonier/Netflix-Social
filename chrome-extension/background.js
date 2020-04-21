@@ -179,7 +179,7 @@ function sendSocketMessage(data) {
 function processSocketMessage(message) {
     if (!message) return;
     var isServerMessage = message.sender == "server";
-    isServerMessage ? processServerMessage(message) : processClientMessage();
+    isServerMessage ? processServerMessage(message) : processClientMessage(message);
 }
 
 /*
