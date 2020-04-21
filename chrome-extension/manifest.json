@@ -3,7 +3,6 @@
   "version": "2.1",
   "background": {
     "scripts": [
-      "old-background.js",
       "background.js"
     ],
     "persistent": false
@@ -17,7 +16,7 @@
     "https://www.netflix-social.com/*"
   ],
   "web_accessible_resources": [
-    "/scripts/netflix-sync.js"
+    "/content-scripts/netflix-sync.js"
   ],
   "browser_action": {
     "default_popup": "pages/index.html",
