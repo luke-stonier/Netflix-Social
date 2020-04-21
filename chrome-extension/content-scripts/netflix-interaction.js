@@ -18,26 +18,35 @@ chrome.runtime.onConnect.addListener((port) => {
             returnCurrentTime((responseObject) => port.postMessage(responseObject));
 
         if (message.data.action == "play_video")
-            PlayVideo()
+            PlayVideo(message)
 
         if (message.data.action == "pause_video")
-            PauseVideo();
-        
-        if (message.data.action == "seek_time")
-            console.log(`sync to time ${message.data.seek_time}`);
+            PauseVideo(message);
+
+        if (message.data.action == "sync_time")
+            seekToPoint(message.data.sync_time);
     });
 });
 
-function PlayVideo() {
+function PlayVideo(message) {
+    seekToPoint(message.data.sync_time)
     var playButton = document.getElementById("netflix_social_play");
     if (!playButton) return;
     playButton.click();
 }
 
-function PauseVideo() {
+function PauseVideo(message) {
+    seekToPoint(message.data.sync_time)
     var pauseButton = document.getElementById("netflix_social_pause");
     if (!pauseButton) return;
     pauseButton.click();
+}
+
+function seekToPoint(time) {
+    var sync_button = document.getElementById("netflix_social_playback_time");
+    if (!sync_button) return;
+    sync_button.innerText = time;
+    sync_button.click();
 }
 
 function returnCurrentTime(callback) {

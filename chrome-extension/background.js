@@ -111,14 +111,9 @@ function processPopupMessage(message) {
             return;
         }
         getGroupConnectionAddress(groupId, (resp) => {
-            netflixTabCallback = (response) => {
-                netflixTabCallback = () => { };
-                if (response.data.action != "return_sync_time") return;
-                connectToGroup(resp.server, groupId, displayName, getCurrentWatchUrl(), response.data.sync_time);
-            }
             if (host)
-                sendMessageToNetflixPage({ data: { action: 'get_sync_time' } });
-            if (!host)
+                getSyncTime((response) => connectToGroup(resp.server, groupId, displayName, getCurrentWatchUrl(), response.data.sync_time));
+            else
                 connectToGroup(resp.server, groupId, displayName, "", 0);
 
         });
@@ -135,14 +130,20 @@ function processPopupMessage(message) {
 
     if (message.data.action == "play") {
         var message = dataModel({ action: 'play_video' });
-        sendMessageToNetflixPage(message);
-        sendSocketMessage(message);
+        getSyncTime((response) => {
+            message.data.sync_time = response.data.sync_time;
+            sendMessageToNetflixPage(message);
+            sendSocketMessage(message);
+        });
     }
 
     if (message.data.action == "pause") {
         var message = dataModel({ action: 'pause_video' });
-        sendMessageToNetflixPage(message);
-        sendSocketMessage(message);
+        getSyncTime((response) => {
+            message.data.sync_time = response.data.sync_time;
+            sendMessageToNetflixPage(message);
+            sendSocketMessage(message);
+        });
     }
 }
 
@@ -280,6 +281,15 @@ function getGroupConnectionAddress(groupId, callback) {
 }
 
 // NETFLIX PAGE
+function getSyncTime(callback) {
+    netflixTabCallback = (response) => {
+        netflixTabCallback = () => { };
+        if (response.data.action != "return_sync_time") return;
+        callback(response);
+    }
+    sendMessageToNetflixPage({ data: { action: 'get_sync_time' } });
+}
+
 function getCurrentWatchUrl() {
     if (!netflixTab) { showPopupError("No netflix page open."); return; }
     if (!netflixTab.url) { return; }
