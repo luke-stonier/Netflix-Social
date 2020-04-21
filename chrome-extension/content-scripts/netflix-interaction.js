@@ -43,7 +43,7 @@ function PauseVideo(message) {
 }
 
 function seekToPoint(time) {
-    var sync_button = document.getElementById("netflix_social_playback_time");
+    var sync_button = document.getElementById("netflix_social_seek");
     if (!sync_button) return;
     sync_button.innerText = time;
     sync_button.click();
