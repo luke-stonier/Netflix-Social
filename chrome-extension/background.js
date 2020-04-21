@@ -189,7 +189,7 @@ function processSocketMessage(message) {
                 openNetflixTab(_url, (t) => { netflixTab = t });
 
             if (t && t.url.indexOf(message.data.url) == -1)
-                chrome.tabs.update(_tab.id, { url: _url }, function (tab) { netflixTab = tab; });
+                chrome.tabs.update(netflixTab.id, { url: _url }, function (tab) { netflixTab = tab; });
         })
     } else {
         // client message ie chat/play/pause
