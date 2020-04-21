@@ -22,6 +22,7 @@ var isConnected = false;
 var lastServerMessage;
 var groupId;
 var displayName;
+var userId;
 
 chrome.runtime.onInstalled.addListener(function () {
     // runs when the extension has been installed
@@ -39,7 +40,6 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
-    console.log(`${tab.url} updated -> ${info.status}`);
     if (info.status && info.status == "complete" || tab.status == "complete") {
         if (netflixTab && tab.id == netflixTab.id) {
             netflixTab = tab;
@@ -163,6 +163,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
 function processSocketMessage(message) {
     if (!message) return;
+    console.log(message);
     message = JSON.parse(message);
     var isServerMessage = message.sender == "server";
     if (isServerMessage) {
@@ -180,6 +181,8 @@ function processSocketMessage(message) {
             }
         }
         */
+
+        user_id = user_id ? user_id : message.data.user_id;
 
         lastServerMessage = message;
         setPopupScreen();
