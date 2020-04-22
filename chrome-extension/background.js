@@ -17,6 +17,7 @@ var netflixTabLoading = false;
 var netflixPort;
 var netflixPortConnected;
 var netflixTabCallback = () => { };
+var heartbeat;
 
 var isConnected = false;
 var lastServerMessage;
@@ -154,6 +155,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.addEventListener('open', function (event) {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
+        StartHeartbeat();
         ConnectedToSocket();
     });
 
@@ -169,6 +171,18 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         if (event.code != 1006) showPopupError("Disconnected from group");
         DisconnectedFromSocket();
     });
+}
+
+function StartHeartbeat() {
+    heartbeat = setInterval(() => {
+        getSyncTime((response) => {
+            var message = dataModel({
+                sync_time: response.data.sync_time,
+                url: getCurrentWatchUrl()
+            });
+            sendSocketMessage(message);
+        });
+    }, 500);
 }
 
 function sendSocketMessage(data) {
