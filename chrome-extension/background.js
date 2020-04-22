@@ -184,7 +184,7 @@ function StartHeartbeat() {
             });
             sendSocketMessage(message);
         });
-    }, 500);
+    }, 1000);
 }
 
 function sendSocketMessage(data) {
