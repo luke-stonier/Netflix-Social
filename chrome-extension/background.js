@@ -128,6 +128,8 @@ function processPopupMessage(message) {
 
     // Connected Messages
     if (message.data.action == "sync") {
+        var message = dataModel({ action: 'sync' });
+        sendSocketMessage(message);
     }
 
     if (message.data.action == "play") {
