@@ -178,6 +178,7 @@ function StartHeartbeat() {
     heartbeat = setInterval(() => {
         getSyncTime((response) => {
             var message = dataModel({
+                action: 'set_sync_time',
                 sync_time: response.data.sync_time,
                 url: getCurrentWatchUrl()
             });
@@ -247,6 +248,7 @@ function DisconnectFromSocket() {
         return;
     clearInterval(heartbeat);
     heartbeatRunning = false;
+    user_id = "";
     socket.close();
 }
 
