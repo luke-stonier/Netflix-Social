@@ -225,6 +225,8 @@ function processServerMessage(message) {
     setPopupScreen();
     if (message.data.url)
         SyncUrl(message.data.url);
+    if (message.data.seek_time)
+        SyncTime(message.data.seek_time);
 }
 
 /*
@@ -252,6 +254,11 @@ function DisconnectFromSocket() {
     heartbeatRunning = false;
     user_id = "";
     socket.close();
+}
+
+function SyncTime(time) {
+    var message = dataModel({ action: 'sync_time', sync_time: time });
+    sendMessageToNetflixPage(message);
 }
 
 function SyncUrl(url) {
