@@ -215,7 +215,7 @@ function processServerMessage(message) {
     user_id = (user_id || message.data.user_id);
     if (message.data.user_id != user_id) return;
     lastServerMessage = message;
-    if (message.isHost && !heartbeat)
+    if (message.data.isHost && !heartbeat)
         StartHeartbeat();
     setPopupScreen();
     if (message.data.url)
