@@ -18,6 +18,7 @@ var netflixPort;
 var netflixPortConnected;
 var netflixTabCallback = () => { };
 var heartbeat;
+var heartbeatRunning = false;
 
 var isConnected = false;
 var lastServerMessage;
@@ -173,6 +174,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 }
 
 function StartHeartbeat() {
+    heartbeatRunning = true;
     heartbeat = setInterval(() => {
         getSyncTime((response) => {
             var message = dataModel({
@@ -215,7 +217,7 @@ function processServerMessage(message) {
     user_id = (user_id || message.data.user_id);
     if (message.data.user_id != user_id) return;
     lastServerMessage = message;
-    if (message.data.isHost && !heartbeat)
+    if (message.data.isHost && !heartbeatRunning)
         StartHeartbeat();
     setPopupScreen();
     if (message.data.url)
@@ -244,7 +246,7 @@ function DisconnectFromSocket() {
     if (!socket || socket.readyState != 1)
         return;
     clearInterval(heartbeat);
-    heartbeat = undefined;
+    heartbeatRunning = false;
     socket.close();
 }
 
