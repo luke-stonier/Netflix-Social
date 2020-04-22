@@ -155,7 +155,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.addEventListener('open', function (event) {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
-        StartHeartbeat();
         ConnectedToSocket();
     });
 
@@ -216,6 +215,8 @@ function processServerMessage(message) {
     user_id = (user_id || message.data.user_id);
     if (message.data.user_id != user_id) return;
     lastServerMessage = message;
+    if (message.isHost && !heartbeat)
+        StartHeartbeat();
     setPopupScreen();
     if (message.data.url)
         SyncUrl(message.data.url);
@@ -242,6 +243,8 @@ function processClientMessage(message) {
 function DisconnectFromSocket() {
     if (!socket || socket.readyState != 1)
         return;
+    clearInterval(heartbeat);
+    heartbeat = undefined;
     socket.close();
 }
 
