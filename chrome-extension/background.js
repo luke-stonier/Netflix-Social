@@ -98,8 +98,6 @@ function processPopupMessage(message) {
         });
     }
 
-    console.log(message.data);
-
     // Connection types
     if (message.data.action == "connect") {
         groupId = message.data.params.groupId;
@@ -136,7 +134,9 @@ function processPopupMessage(message) {
         var message = dataModel({ action: 'play_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
-            sendMessageToNetflixPage(message);
+            var netflixMessage = message;
+            netflixMessage.data.isSender = true;
+            sendMessageToNetflixPage(netflixMessage);
             sendSocketMessage(message);
         });
     }
@@ -145,7 +145,9 @@ function processPopupMessage(message) {
         var message = dataModel({ action: 'pause_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
-            sendMessageToNetflixPage(message);
+            var netflixMessage = message;
+            netflixMessage.data.isSender = true;
+            sendMessageToNetflixPage(netflixMessage);
             sendSocketMessage(message);
         });
     }
@@ -159,6 +161,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.addEventListener('open', function (event) {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
         ConnectedToSocket();
+        AddChatWindow();
     });
 
     socket.addEventListener('message', function (event) {
@@ -186,7 +189,7 @@ function StartHeartbeat() {
             });
             sendSocketMessage(message);
         });
-    }, 1000);
+    }, 500);
 }
 
 function sendSocketMessage(data) {
@@ -222,7 +225,10 @@ function processServerMessage(message) {
     lastServerMessage = message;
     if (message.data.isHost && !heartbeatRunning)
         StartHeartbeat();
+
     setPopupScreen();
+
+    if (message.data.isHost) return;    // DON'T PROCESS DATA IF HOST AS THEY PRODUCE IT
     if (message.data.url)
         SyncUrl(message.data.url);
     if (message.data.seek_time)
@@ -242,7 +248,6 @@ SAMPLE CLIENT MESSAGE
 */
 
 function processClientMessage(message) {
-    console.log(message);
     if (message.sender == user_id) return;
     sendMessageToNetflixPage(message);
 }
@@ -343,6 +348,15 @@ function InjectInteractionScript(callback) {
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-interaction.js' }, function (result) {
         createNetflixPagePortConnection();
         callback(result);
+    });
+}
+
+
+function AddChatWindow() {
+    if (!netflixTab) return;
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
+        // added chat
+        console.log("Chat window injected");
     });
 }
 

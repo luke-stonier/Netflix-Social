@@ -29,17 +29,19 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 function PlayVideo(message) {
+    if (!message.data.isSender)
+        seekToPoint(message.data.sync_time);
     var playButton = document.getElementById("netflix_social_play");
-    if (!playButton) return;
-    playButton.click();
-    seekToPoint(message.data.sync_time);
+    if (playButton)
+        playButton.click();
 }
 
 function PauseVideo(message) {
+    if (!message.data.isSender)
+        seekToPoint(message.data.sync_time);
     var pauseButton = document.getElementById("netflix_social_pause");
-    if (!pauseButton) return;
-    pauseButton.click();
-    seekToPoint(message.data.sync_time);
+    if (pauseButton)
+        pauseButton.click();
 }
 
 function seekToPoint(time) {
