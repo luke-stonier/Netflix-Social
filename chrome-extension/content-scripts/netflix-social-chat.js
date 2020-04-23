@@ -1,18 +1,23 @@
-createMessageBox();
+setup();
+
+function setup() {
+    createMessageBox();
+}
 
 function createMessageBox() {
     if (document.getElementsByClassName("AkiraPlayer").length == 0)
         return;
 
     var wrapper = document.getElementsByClassName("AkiraPlayer")[0];
-    // wrapper.style.display = "flex";
     var container = document.getElementsByClassName("NFPlayer")[0];
+    if (!container) return;
+    container.style.width = "auto";
+    container.style.right = "15%";
 
-    var x = document.getElementById("netflix_party_message_box");
+    var x = document.getElementById("netflix_social_message_box");
     if (x) return;
     x = document.createElement("div");
-    x.id = "netflix_party_message_box";
-    x.style.display = "none";
+    x.id = "netflix_social_message_box";
     x.style.position = "absolute";
     x.style.top = "0px";
     x.style.bottom = "0px";
@@ -34,13 +39,13 @@ function createMessageBox() {
     container.style.flexDirection = "column";
     container.style.overflowY = "auto";
     container.style.overflowX = "hidden";
-    container.innerHTML = `<div id="netflix_party_chat" style="width: 100%; flex: 1 1;">
+    container.innerHTML = `<div id="netflix_social_chat" style="width: 100%; flex: 1 1;">
     </div>`;
 
     var message_input = document.createElement("div");
     message_input.innerHTML = `<div style="width: 100%; display: flex; justify-content: space-between;">
-        <input id="netflix_party_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
-        <button id="netflix_party_send_message_button" style="position: relative;
+        <input id="netflix_social_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
+        <button id="netflix_social_send_message_button" style="position: relative;
         text-align: center;
         background: #db4d48;
         border: none;
@@ -62,14 +67,14 @@ function createMessageBox() {
         }
     }
 
-    document.getElementById("netflix_party_send_message_button").addEventListener("click", (event) => {
+    document.getElementById("netflix_social_send_message_button").addEventListener("click", (event) => {
         sendMessage();
     });
 }
 
 function sendMessage() {
-    var x = document.getElementById("netflix_party_message_sync");
-    var y = document.getElementById("netflix_party_chat_message");
+    var x = document.getElementById("netflix_social_message_sync");
+    var y = document.getElementById("netflix_social_chat_message");
     if (!x || !y) return;
     if (y.value == "" || !y.value) {
         // show error.

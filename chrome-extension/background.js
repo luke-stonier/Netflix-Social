@@ -175,6 +175,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.addEventListener('close', function (event) {
         if (event.code != 1006) showPopupError("Disconnected from group");
         DisconnectedFromSocket();
+        DisconnectProcess();
     });
 }
 
@@ -204,23 +205,15 @@ function processSocketMessage(message) {
     isServerMessage ? processServerMessage(message) : processClientMessage(message);
 }
 
-/*
-SAMPLE SERVER MESSAGE
-{
-    "sender":"server",
-    "data":{
-        "user_id":"PeflhqFizmfg7BZG8RxZnA==",
-        "displayName":"text",
-        "isHost":true,"
-        url":"/81130223?trackId=14170286",
-        "client_count":1,
-        "seek_time":"420691"
-    }
-}
-*/
-
 function processServerMessage(message) {
     user_id = (user_id || message.data.user_id);
+
+    // Process clients leaving/joining
+    var action = message.data.action;
+    if (action == "added" || action == "remove") {
+        sendMessageToNetflixPage(message);
+    }
+
     if (message.data.user_id != user_id) return;
     lastServerMessage = message;
     if (message.data.isHost && !heartbeatRunning)
@@ -235,20 +228,13 @@ function processServerMessage(message) {
         SyncTime(message.data.seek_time);
 }
 
-/*
-SAMPLE CLIENT MESSAGE
-{
-    "sender":"EGEPx46/1RKdHSH6jtuIxQ==",
-    "data":{
-        "action":"set_sync_time",
-        "url":"/81130223?trackId=14170286",
-        "seek_time":"2101001"
-    }
-}
-*/
-
 function processClientMessage(message) {
     if (message.sender == user_id) return;
+    sendMessageToNetflixPage(message);
+}
+
+function DisconnectProcess() {
+    var message = dataModel({ action: 'left_group' });
     sendMessageToNetflixPage(message);
 }
 
@@ -351,13 +337,9 @@ function InjectInteractionScript(callback) {
     });
 }
 
-
 function AddChatWindow() {
     if (!netflixTab) return;
-    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
-        // added chat
-        console.log("Chat window injected");
-    });
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) { });
 }
 
 function createNetflixPagePortConnection() {
