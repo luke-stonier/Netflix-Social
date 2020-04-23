@@ -36,7 +36,7 @@ function PlayVideo(message) {
         var playButton = document.getElementById("netflix_social_play");
         if (playButton)
             playButton.click();
-    }, 100);
+    }, 250);
 }
 
 function PauseVideo(message) {
@@ -47,7 +47,7 @@ function PauseVideo(message) {
         var pauseButton = document.getElementById("netflix_social_pause");
         if (pauseButton)
             pauseButton.click();
-    }, 100);
+    }, 250);
 }
 
 function seekToPoint(time) {
