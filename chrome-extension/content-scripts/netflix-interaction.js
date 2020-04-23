@@ -31,17 +31,23 @@ chrome.runtime.onConnect.addListener((port) => {
 function PlayVideo(message) {
     if (!message.data.isSender)
         seekToPoint(message.data.sync_time);
-    var playButton = document.getElementById("netflix_social_play");
-    if (playButton)
-        playButton.click();
+
+    setTimeout(() => {
+        var playButton = document.getElementById("netflix_social_play");
+        if (playButton)
+            playButton.click();
+    }, 100);
 }
 
 function PauseVideo(message) {
     if (!message.data.isSender)
         seekToPoint(message.data.sync_time);
-    var pauseButton = document.getElementById("netflix_social_pause");
-    if (pauseButton)
-        pauseButton.click();
+
+    setTimeout(() => {
+        var pauseButton = document.getElementById("netflix_social_pause");
+        if (pauseButton)
+            pauseButton.click();
+    }, 100);
 }
 
 function seekToPoint(time) {
