@@ -161,7 +161,6 @@ function UnregisterChat() {
 }
 
 function createMessageButtons() {
-    console.log("create message buttons");
     var messageSync = document.getElementById("netflix_social_message_sync");
     var messageTrigger = document.getElementById("netflix_social_message_sync");
     if (messageTrigger) {
@@ -189,7 +188,6 @@ function sendChatMessage(event) {
     };
 
     if (portConnected) {
-        console.log(message);
         openPort.postMessage(message);
     } else {
         console.error("Port is not connected, cant send chat message");

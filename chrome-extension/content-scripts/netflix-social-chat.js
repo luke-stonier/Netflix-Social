@@ -80,7 +80,6 @@ function attachWindowToElement(wrapper) {
 }
 
 function sendMessage() {
-    console.log("Send message");
     var x = document.getElementById("netflix_social_message_sync");
     var y = document.getElementById("netflix_social_chat_message");
     if (!x || !y) return;
