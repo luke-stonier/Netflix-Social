@@ -57,8 +57,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
             netflixTabLoading = false;
             if (getCurrentWatchUrl()) {
                 InjectContentScripts(() => {
-                    InjectInteractionScript(() => {
-                    });
+                    InjectInteractionScript(() => { });
                 });
             }
         }
@@ -90,6 +89,9 @@ function processPopupMessage(message) {
             }
         });
     }
+
+    if (isConnected)
+        AddChatWindow();
 
     if (message.data.action == "wake") {
         getExtensionSettings(() => {
@@ -131,11 +133,13 @@ function processPopupMessage(message) {
     }
 
     if (message.data.action == "play") {
+        console.log("play");
         var message = dataModel({ action: 'play_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
             var netflixMessage = message;
             netflixMessage.data.isSender = true;
+            console.log(response)
             sendMessageToNetflixPage(netflixMessage);
             sendSocketMessage(message);
         });
@@ -240,7 +244,7 @@ function processClientMessage(message) {
         sendMessageToNetflixPage(message);
         return;
     }
-    if (!isClient) return;
+    if (isClient) return;
     sendMessageToNetflixPage(message);
 }
 
