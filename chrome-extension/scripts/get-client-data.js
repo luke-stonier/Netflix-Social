@@ -79,7 +79,6 @@ function createMessageButtons() {
     var messageSync = document.getElementById("netflix_party_message_sync");
     if (messageSync) return;
 
-    console.log("Create message sync button.");
     var messageTrigger = document.createElement("button");
     messageTrigger.id = "netflix_party_message_sync";
     messageTrigger.style.display = "none";
