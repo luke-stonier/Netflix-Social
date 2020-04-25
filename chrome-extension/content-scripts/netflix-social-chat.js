@@ -1,3 +1,4 @@
+console.log("netflix-social-chat.js");
 setup();
 
 function setup() {
@@ -13,9 +14,15 @@ function createMessageBox() {
     if (!container) return;
     container.style.width = "auto";
     container.style.right = "15%";
+    attachWindowToElement(wrapper);;
+}
 
+function attachWindowToElement(wrapper) {
     var x = document.getElementById("netflix_social_message_box");
-    if (x) return;
+    if (x) {
+        x.style.display="flex";
+        return;
+    }
     x = document.createElement("div");
     x.id = "netflix_social_message_box";
     x.style.position = "absolute";
@@ -73,6 +80,7 @@ function createMessageBox() {
 }
 
 function sendMessage() {
+    console.log("Send message");
     var x = document.getElementById("netflix_social_message_sync");
     var y = document.getElementById("netflix_social_chat_message");
     if (!x || !y) return;

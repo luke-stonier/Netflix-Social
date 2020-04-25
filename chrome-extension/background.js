@@ -199,6 +199,11 @@ function sendSocketMessage(data) {
     socket.send(data);
 }
 
+function sendGroupChatMessage(message) {
+    var data = dataModel({ action: 'message', message: message });
+    sendSocketMessage(data);
+}
+
 function processSocketMessage(message) {
     if (!message) return;
     var isServerMessage = message.sender == "server";
@@ -229,7 +234,13 @@ function processServerMessage(message) {
 }
 
 function processClientMessage(message) {
-    if (message.sender == user_id) return;
+    var isClient = message.sender == user_id;
+    if (message.data.action == "message") {
+        message.data.isClient = isClient;
+        sendMessageToNetflixPage(message);
+        return;
+    }
+    if (!isClient) return;
     sendMessageToNetflixPage(message);
 }
 
@@ -344,9 +355,16 @@ function AddChatWindow() {
 
 function createNetflixPagePortConnection() {
     if (!netflixTab) return
+    console.log("create port connection");
     netflixPort = chrome.tabs.connect(netflixTab.id, { name: 'background-netflix-sync' });
     netflixPortConnected = true;
     netflixPort.onMessage.addListener(function (message) {
+        if (message.data.action != "return_sync_time") {
+            if (message.data.action == "message")
+                sendGroupChatMessage(message.data.message);
+        }
+
+        // Process other messages
         if (netflixTabCallback)
             netflixTabCallback(message);
     });

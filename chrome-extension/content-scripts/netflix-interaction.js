@@ -1,6 +1,12 @@
 console.log("netflix-interacion.js");
 var portConnected = false;
+var portMessage = "start";
+var openPort;
 var NETFLIX_SOCIAL_CHAT_CONTAINER = "netflix_social_message_box";
+
+function setup() {
+    createMessageButtons();
+}
 
 function dataModel() {
     return { data: {} };
@@ -8,8 +14,15 @@ function dataModel() {
 
 chrome.runtime.onConnect.addListener((port) => {
     portConnected = true;
+    portMessage = "open";
+    openPort = port;
+    setup();
     if (port.onMessage.hasListeners()) { return; }
     port.onDisconnect.addListener((port) => {
+        console.log("port connection ended");
+        UnregisterChat();
+        portMessage = "closed";
+        openPort = null;
         portConnected = false;
     });
     port.onMessage.addListener(function (message) {
@@ -52,7 +65,7 @@ function DisconnectedFromGroup(message) {
 }
 
 function ProcessChatMessage(message) {
-    console.log(message);
+    AddMessageToChat(message.data.message, message.data.displayName, message.data.isClient, false);
 }
 
 function PlayVideo(message) {
@@ -98,11 +111,13 @@ function returnCurrentTime(callback) {
 
 // CHAT
 function AddMessageToChat(message, senderName, isClient, serverMessage) {
-    document.getElementById("netflix_party_message_box").style.display = "flex";
+    OpenChat();
+    var container = document.getElementById("netflix_social_chat");
+    if (!container) return;
     var player_container = document.getElementsByClassName("NFPlayer")[0];
+    if (!player_container) return;
     player_container.style.right = "15%";
     player_container.style.width = "auto";
-    var container = document.getElementById("netflix_party_chat");
 
     if (serverMessage) {
         var serverChatMessage = document.createElement("div");
@@ -137,6 +152,48 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
     chatMessageContainer.append(chatMessageSender);
 
     container.append(chatMessageContainer);
+}
+
+function UnregisterChat() {
+    var messageTrigger = document.getElementById("netflix_social_message_sync");
+    if (messageTrigger)
+        messageTrigger.removeEventListener("click", sendChatMessage);
+}
+
+function createMessageButtons() {
+    console.log("create message buttons");
+    var messageSync = document.getElementById("netflix_social_message_sync");
+    var messageTrigger = document.getElementById("netflix_social_message_sync");
+    if (messageTrigger) {
+        messageTrigger.removeEventListener("click", sendChatMessage);
+        messageTrigger.addEventListener("click", sendChatMessage);
+        return;
+    }
+    if (messageSync) return;
+
+    messageTrigger = document.createElement("button");
+    messageTrigger.id = "netflix_social_message_sync";
+    messageTrigger.style.display = "none";
+    messageTrigger.addEventListener("click", sendChatMessage);
+
+    document.body.append(messageTrigger);
+}
+
+function sendChatMessage(event) {
+    var chatToSend = event.toElement.innerText;
+    var message = {
+        data: {
+            action: 'message',
+            message: chatToSend
+        }
+    };
+
+    if (portConnected) {
+        console.log(message);
+        openPort.postMessage(message);
+    } else {
+        console.error("Port is not connected, cant send chat message");
+    }
 }
 
 function HideChat() {
