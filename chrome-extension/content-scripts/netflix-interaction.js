@@ -3,8 +3,10 @@ var portConnected = false;
 var portMessage = "start";
 var openPort;
 var NETFLIX_SOCIAL_CHAT_CONTAINER = "netflix_social_message_box";
+var loadingLoop;
 
 function setup() {
+    startCheckLoadingLoop();
     createMessageButtons();
 }
 
@@ -107,6 +109,20 @@ function returnCurrentTime(callback) {
     responseObject.data.action = "return_sync_time";
     responseObject.data.sync_time = playbackTime.innerText;
     callback(responseObject);
+}
+
+function startCheckLoadingLoop() {
+    loadingLoop = setInterval(() => {
+        var x = document.getElementById("netflix_social_loading");
+        if (!x) { console.log("nothing to check"); return; }
+        x.click();
+        var isLoading = x.innerText;
+        if (isLoading == "false") {
+            clearInterval(loadingLoop);
+            if (portConnected)
+                openPort.postMessage({ data: { action: 'loaded' } });
+        }
+    }, 500);
 }
 
 // CHAT

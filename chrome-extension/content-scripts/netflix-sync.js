@@ -6,6 +6,7 @@ var playback_id = "netflix_social_playback_time";
 var play_id = "netflix_social_play";
 var pause_id = "netflix_social_pause";
 var seek_id = "netflix_social_seek";
+var loading_id = "netflix_social_loading";
 
 setup();
 
@@ -25,6 +26,7 @@ function createInteractableComponents() {
     createSeekComponent();
     createPlayComponent();
     createPauseComponent();
+    createIsLoadingComponent();
 
     AddListeners();
 }
@@ -35,12 +37,14 @@ function AddListeners() {
     document.getElementById(pause_id).removeEventListener("click", PauseVideo);
     document.getElementById(playback_id).removeEventListener("click", GetPlaybackTime);
     document.getElementById(seek_id).removeEventListener("click", SeekToPoint);
+    document.getElementById(loading_id).removeEventListener("click", checkLoading);
 
     // add new listeners
     document.getElementById(play_id).addEventListener("click", PlayVideo);
     document.getElementById(pause_id).addEventListener("click", PauseVideo);
     document.getElementById(playback_id).addEventListener("click", GetPlaybackTime);
     document.getElementById(seek_id).addEventListener("click", SeekToPoint);
+    document.getElementById(loading_id).addEventListener("click", checkLoading);
 }
 
 function PlayVideo() {
@@ -73,6 +77,16 @@ function SeekToPoint() {
     if (!player) return;
     var comp = document.getElementById(seek_id);
     player.seek(comp.innerText);
+}
+
+function checkLoading() {
+    getPlayer();
+    var isLoading = true;
+    if (!player)
+        isLoading = true;
+     else
+        isLoading = player.isLoading();
+    document.getElementById(loading_id).innerText = isLoading;
 }
 
 function createPlayComponent() {
@@ -108,5 +122,14 @@ function createSeekComponent() {
     comp = document.createElement("button");
     comp.style.display = "none";
     comp.id = seek_id;
+    document.body.append(comp);
+}
+
+function createIsLoadingComponent() {
+    var comp = document.getElementById(loading_id);
+    if (comp) return;
+    comp = document.createElement("button");
+    comp.style.display = "none";
+    comp.id = loading_id;
     document.body.append(comp);
 }

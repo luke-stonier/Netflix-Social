@@ -90,9 +90,6 @@ function processPopupMessage(message) {
         });
     }
 
-    if (isConnected)
-        AddChatWindow();
-
     if (message.data.action == "wake") {
         getExtensionSettings(() => {
             getPopupView();
@@ -133,13 +130,11 @@ function processPopupMessage(message) {
     }
 
     if (message.data.action == "play") {
-        console.log("play");
         var message = dataModel({ action: 'play_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
             var netflixMessage = message;
             netflixMessage.data.isSender = true;
-            console.log(response)
             sendMessageToNetflixPage(netflixMessage);
             sendSocketMessage(message);
         });
@@ -366,7 +361,11 @@ function createNetflixPagePortConnection() {
         if (message.data.action != "return_sync_time") {
             if (message.data.action == "message")
                 sendGroupChatMessage(message.data.message);
+
+            if (message.data.action == "loaded")
+                videoLoaded();
         }
+
 
         // Process other messages
         if (netflixTabCallback)
@@ -386,6 +385,11 @@ function sendMessageToNetflixPage(message) {
     netflixPort.postMessage(message);
 }
 
+function videoLoaded() {
+    if (isConnected) {
+        AddChatWindow();
+    }
+}
 
 // Extension Settings
 function getExtensionSettings(callback) {
