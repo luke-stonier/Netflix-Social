@@ -172,6 +172,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.addEventListener('close', function (event) {
+        console.log("Disconnected from socket");
         if (event.code != 1006) showPopupError("Disconnected from group");
         DisconnectedFromSocket();
         DisconnectProcess();
@@ -354,7 +355,6 @@ function AddChatWindow() {
 
 function createNetflixPagePortConnection() {
     if (!netflixTab) return
-    console.log("create port connection");
     netflixPort = chrome.tabs.connect(netflixTab.id, { name: 'background-netflix-sync' });
     netflixPortConnected = true;
     netflixPort.onMessage.addListener(function (message) {
