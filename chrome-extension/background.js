@@ -47,6 +47,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
     if (netflixTab && netflixTab.id == tabId) {
         // netflix tab was closed...
         netflixTab = null;
+        netflixTabLoading = false;
     }
 });
 
