@@ -39,7 +39,7 @@ function attachWindowToElement(wrapper) {
     wrapper.append(x);
 
     var container = document.createElement("div");
-    container.id = "netflix_party_chat_container";
+    container.id = "netflix_social_chat_container";
     container.style.width = "100%";
     container.style.display = "flex";
     container.style.flex = "1 1";

@@ -52,6 +52,11 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
+    // if (netflixTab && tabId == netflixTab.id)
+    //     if (info.status == "loading" || tab.status == "loading") {
+
+    //     }
+
     if (info.status && info.status == "complete" || tab.status == "complete") {
         if (netflixTab && tab.id == netflixTab.id) {
             netflixTab = tab;
@@ -201,6 +206,7 @@ function sendSocketMessage(data) {
 }
 
 function sendGroupChatMessage(message) {
+    console.log(message)
     var data = dataModel({ action: 'message', message: message });
     sendSocketMessage(data);
 }
@@ -344,6 +350,7 @@ function InjectContentScripts(callback) {
 function InjectInteractionScript(callback) {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-interaction.js' }, function (result) {
+        chrome.tabs.insertCSS(netflixTab.id, { file: 'netflix-social.css' }, () => {});
         createNetflixPagePortConnection();
         callback(result);
     });
@@ -373,6 +380,7 @@ function createNetflixPagePortConnection() {
             netflixTabCallback(message);
     });
     netflixPort.onDisconnect.addListener((port) => {
+        console.log("port disconnected");
         if (port.error)
             console.log(p.error.message)
         netflixPortConnected = false;

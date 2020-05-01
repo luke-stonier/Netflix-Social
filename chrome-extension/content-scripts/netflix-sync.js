@@ -19,6 +19,7 @@ function getPlayer() {
     if (!window.netflix) { console.log("no netflix api"); return; }
     var videoPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
+    // console.log(player ? 'Player registered' : 'No player found');
 }
 
 function createInteractableComponents() {
@@ -48,6 +49,7 @@ function AddListeners() {
 }
 
 function PlayVideo() {
+    getPlayer();
     var timeoutPlay = document.getElementsByClassName("nf-big-play-pause-secondary");
     if (timeoutPlay)
         timeoutPlay = timeoutPlay[0];

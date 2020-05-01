@@ -18,11 +18,12 @@ chrome.runtime.onConnect.addListener((port) => {
     portConnected = true;
     portMessage = "open";
     openPort = port;
+    clearInterval(loadingLoop);
     setup();
     if (port.onMessage.hasListeners()) { return; }
     port.onDisconnect.addListener((port) => {
-        console.log("port connection ended");
         UnregisterChat();
+        clearInterval(loadingLoop);
         portMessage = "closed";
         openPort = null;
         portConnected = false;
@@ -168,23 +169,25 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
     chatMessageContainer.append(chatMessageSender);
 
     container.append(chatMessageContainer);
+
+    // auto scroll
+    var chatContainer = document.getElementById('netflix_social_chat_container');
+    chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
 }
 
 function UnregisterChat() {
     var messageTrigger = document.getElementById("netflix_social_message_sync");
-    if (messageTrigger)
-        messageTrigger.removeEventListener("click", sendChatMessage);
+    if (!messageTrigger) return;
+    messageTrigger.removeEventListener("click", sendChatMessage);
+    messageTrigger.parentNode.removeChild(messageTrigger);
 }
 
 function createMessageButtons() {
-    var messageSync = document.getElementById("netflix_social_message_sync");
     var messageTrigger = document.getElementById("netflix_social_message_sync");
     if (messageTrigger) {
         messageTrigger.removeEventListener("click", sendChatMessage);
-        messageTrigger.addEventListener("click", sendChatMessage);
-        return;
+        messageTrigger.parentNode.removeChild(messageTrigger);
     }
-    if (messageSync) return;
 
     messageTrigger = document.createElement("button");
     messageTrigger.id = "netflix_social_message_sync";
@@ -206,7 +209,7 @@ function sendChatMessage(event) {
     if (portConnected) {
         openPort.postMessage(message);
     } else {
-        console.error("Port is not connected, cant send chat message");
+        console.warn("Port is not connected, cant send chat message");
     }
 }
 
