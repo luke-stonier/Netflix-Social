@@ -25,6 +25,7 @@ function getPlayer() {
         warning.parentNode.removeChild(warning);
         return;
     }
+    if (warning) return;
     warning = document.createElement("p");
     warning.id = "netflix_social_player_warning";
     warning.innerText = "Netflix player couldnt be found, please try refreshing the window";
