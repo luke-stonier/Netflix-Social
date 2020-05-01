@@ -206,7 +206,6 @@ function sendSocketMessage(data) {
 }
 
 function sendGroupChatMessage(message) {
-    console.log(message)
     var data = dataModel({ action: 'message', message: message });
     sendSocketMessage(data);
 }
@@ -350,7 +349,7 @@ function InjectContentScripts(callback) {
 function InjectInteractionScript(callback) {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-interaction.js' }, function (result) {
-        chrome.tabs.insertCSS(netflixTab.id, { file: 'netflix-social.css' }, () => {});
+        chrome.tabs.insertCSS(netflixTab.id, { file: 'netflix-social.css' }, () => { });
         createNetflixPagePortConnection();
         callback(result);
     });
@@ -396,6 +395,9 @@ function sendMessageToNetflixPage(message) {
 
 function videoLoaded() {
     if (isConnected) {
+        // sync to host
+        var message = dataModel({ action: 'sync' });
+        sendSocketMessage(message);
         AddChatWindow();
     }
 }

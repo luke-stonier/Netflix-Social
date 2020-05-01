@@ -19,7 +19,20 @@ function getPlayer() {
     if (!window.netflix) { console.log("no netflix api"); return; }
     var videoPlayer = window.netflix.appContext.state.playerApp.getAPI().videoPlayer;
     player = videoPlayer.getVideoPlayerBySessionId(videoPlayer.getAllPlayerSessionIds()[0]);
-    // console.log(player ? 'Player registered' : 'No player found');
+    var warning = document.getElementById("netflix_social_player_warning");
+    if (player) {
+        if (!warning) return;
+        warning.parentNode.removeChild(warning);
+        return;
+    }
+    warning = document.createElement("p");
+    warning.id = "netflix_social_player_warning";
+    warning.innerText = "Netflix player couldnt be found, please try refreshing the window";
+    warning.style.color="red";
+    warning.style.fontSize="15px";
+    warning.style.zIndex="1000";
+    warning.style.position="absolute";
+    document.body.append(warning);
 }
 
 function createInteractableComponents() {
