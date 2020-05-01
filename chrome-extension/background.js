@@ -379,7 +379,6 @@ function createNetflixPagePortConnection() {
             netflixTabCallback(message);
     });
     netflixPort.onDisconnect.addListener((port) => {
-        console.log("port disconnected");
         if (port.error)
             console.log(p.error.message)
         netflixPortConnected = false;
