@@ -106,6 +106,7 @@ function processPopupMessage(message) {
     // Connection types
     if (message.data.action == "connect") {
         groupId = message.data.params.groupId;
+        groupKey = message.data.params.groupKey;
         displayName = message.data.params.displayName;
         var host = message.data.params.host;
 
@@ -115,7 +116,7 @@ function processPopupMessage(message) {
             showPopupError("Not a valid netflix page, please ensure you are watching a title.");
             return;
         }
-        getGroupConnectionAddress(groupId, (resp) => {
+        getGroupConnectionAddress(groupId, groupKey, (resp) => {
             if (host)
                 getSyncTime((response) => connectToGroup(resp.server, groupId, displayName, getCurrentWatchUrl(), response.data.sync_time));
             else
@@ -303,17 +304,20 @@ function DisconnectedFromSocket() {
 }
 
 // CORE REQUESTS
-function getGroupConnectionAddress(groupId, callback) {
+function getGroupConnectionAddress(groupId, groupKey, callback) {
     const http = new XMLHttpRequest();
     const url = `${CORE_NETFLIX_SOCIAL}/group/${groupId}`;
     http.open("GET", url);
     if (isDev)
         http.setRequestHeader("develop_key", "develop");
+    http.setRequestHeader("group-key", groupKey);
     http.send();
     http.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
             var resp = JSON.parse(http.responseText);
             callback(resp);
+        } else if (this.status == 403) {
+            showPopupError("Group password was not correct");
         }
     };
 }

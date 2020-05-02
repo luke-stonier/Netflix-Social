@@ -138,7 +138,7 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
 
     if (serverMessage) {
         var serverChatMessage = document.createElement("div");
-        serverChatMessage.innerHTML = `<p style="color: gray; width: 100%; text-align: center;">${message}</p>`;
+        serverChatMessage.innerHTML = `<p style="color: gray; width: 100%; text-align: center; font-size: 12px;">${message}</p>`;
         container.append(serverChatMessage);
         return;
     }
@@ -152,12 +152,14 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
     chatMessage.style.padding = "10px";
     chatMessage.style.width = "70%";
     chatMessage.style.background = "red";
+    chatMessage.style.fontSize="15px";
     if (isClient)
         chatMessage.style.marginLeft = "auto";
     chatMessage.innerText = message;
 
     var chatMessageSender = document.createElement("div");
     chatMessageSender.innerText = senderName;
+    chatMessageSender.style.fontSize="12px";
     chatMessageSender.style.margin = "0";
     chatMessageSender.style.padding = "2px 2px 0 2px";
     chatMessageSender.style.color = "gray";
