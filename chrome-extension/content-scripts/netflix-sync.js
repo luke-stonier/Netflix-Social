@@ -26,6 +26,8 @@ function getPlayer() {
         return;
     }
     if (warning) return;
+    var timeoutPlay = document.getElementsByClassName("nf-big-play-pause-secondary");
+    if (timeoutPlay) return;
     warning = document.createElement("p");
     warning.id = "netflix_social_player_warning";
     warning.innerText = "Netflix player couldnt be found, please try refreshing the window";

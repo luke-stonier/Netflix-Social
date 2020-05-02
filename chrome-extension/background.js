@@ -287,6 +287,7 @@ function ConnectedToSocket() {
     getPopupElement("connection_container").style.display = "none";
     getPopupElement("message_container").style.display = "block";
     getPopupElement("group_id").disabled = true;
+    getPopupElement("group_pass").disabled = true;
     getPopupElement("display_name").disabled = true;
     getPopupElement("group_id").value = groupId;
     getPopupElement("display_name").value = displayName;
@@ -298,6 +299,7 @@ function DisconnectedFromSocket() {
     getPopupElement("connection_container").style.display = "block";
     getPopupElement("message_container").style.display = "none";
     getPopupElement("group_id").disabled = false;
+    getPopupElement("group_pass").disabled = false;
     getPopupElement("display_name").disabled = false;
     getPopupElement("group_id").value = "";
     getPopupElement("display_name").value = "";
