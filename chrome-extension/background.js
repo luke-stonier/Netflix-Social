@@ -302,6 +302,7 @@ function DisconnectedFromSocket() {
     getPopupElement("group_pass").disabled = false;
     getPopupElement("display_name").disabled = false;
     getPopupElement("group_id").value = "";
+    getPopupElement("group_pass").value = "";
     getPopupElement("display_name").value = "";
 }
 
