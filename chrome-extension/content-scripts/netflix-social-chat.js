@@ -6,6 +6,11 @@ function setup() {
 }
 
 function createMessageBox() {
+    var googleScripts = document.createElement("link");
+    googleScripts.href = "https://fonts.googleapis.com/css?family=Baloo+Thambi+2&display=swap";
+    googleScripts.rel = "stylesheet";
+    document.head.append(googleScripts);
+
     if (document.getElementsByClassName("AkiraPlayer").length == 0)
         return;
 
@@ -20,7 +25,7 @@ function createMessageBox() {
 function attachWindowToElement(wrapper) {
     var x = document.getElementById("netflix_social_message_box");
     if (x) {
-        x.style.display="flex";
+        x.style.display = "flex";
         return;
     }
     x = document.createElement("div");
@@ -35,7 +40,7 @@ function attachWindowToElement(wrapper) {
     x.style.display = "flex";
     x.style.flexDirection = "column";
     x.style.background = "#1a1a1a";
-    x.innerHTML = `<div style="width: 100%;"><img style="width: 100%;" src="https://netflix-social.com/images/promo_large.png" /></div>`;
+    x.innerHTML = `<div style="width: 100%; font-family: 'Baloo Thambi 2', cursive;"><img style="width: 100%;" src="https://netflix-social.com/images/promo_large.png" /></div>`;
     wrapper.append(x);
 
     var container = document.createElement("div");
@@ -50,9 +55,21 @@ function attachWindowToElement(wrapper) {
     </div>`;
 
     var message_input = document.createElement("div");
-    message_input.innerHTML = `<div style="width: 100%; display: flex; justify-content: space-between;">
-        <input id="netflix_social_chat_message" type="text" placeholder="Your message..." style="width: 100%; font-size: 15px; border: none; padding: 10px; background: rgb(228, 228, 228); color: black;" />
-        <button id="netflix_social_send_message_button" style="position: relative;
+    message_input.innerHTML = `
+    <div style="width: 100%;">
+        <div style="width: 100%; display: flex; justify-content: space-between;">
+            <input id="netflix_social_chat_message" type="text" placeholder="Your message..." style="font-family: 'Baloo Thambi 2', cursive; width: 100%; font-size: 15px;
+            border: none; padding: 10px; background: transparent; color: white; outline: none;" />
+        </div>
+        <div style="font-family: 'Baloo Thambi 2', cursive; user-select: none; background: white; color: black; border: 1px solid grey; border-radius: 25px; padding: 5px; text-align: center; cursor: pointer; margin: 5px;" id="support_us">
+            <img style="height: 15px; vertical-align: middle;" src="https://netflix-social.com/images/patreon.png" /> 
+            <span style="vertical-align: middle; margin: 0 5px; font-size: 12px;">Support us on Patreon</span>
+        </div>
+    </div>`;
+
+    /*
+    SEND BUTTON
+    <button id="netflix_social_send_message_button" style="position: relative;
         text-align: center;
         background: #db4d48;
         border: none;
@@ -60,7 +77,7 @@ function attachWindowToElement(wrapper) {
         outline: none;
         padding: 5px 10px;
         margin: 0;">SEND</button>
-    </div>`;
+  */
 
     x.append(container);
     x.append(message_input);
@@ -74,7 +91,9 @@ function attachWindowToElement(wrapper) {
         }
     }
 
-    document.getElementById("netflix_social_send_message_button").addEventListener("click", (event) => {
+    var sendButton = document.getElementById("netflix_social_send_message_button");
+    if (!sendButton) return;
+    sendButton.addEventListener("click", (event) => {
         sendMessage();
     });
 }

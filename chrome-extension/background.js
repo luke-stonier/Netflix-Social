@@ -23,6 +23,7 @@ var heartbeatRunning = false;
 var isConnected = false;
 var lastServerMessage;
 var groupId;
+var groupKey;
 var displayName;
 var user_id;
 var socket;
@@ -105,6 +106,7 @@ function processPopupMessage(message) {
 
     // Connection types
     if (message.data.action == "connect") {
+        DisableJoinButtons();
         groupId = message.data.params.groupId;
         groupKey = message.data.params.groupKey;
         displayName = message.data.params.displayName;
@@ -283,6 +285,7 @@ function SyncUrl(url) {
 
 function ConnectedToSocket() {
     isConnected = true;
+    EnableJoinButtons();
     getPopupElement("status_icon").style.color = "lime";
     getPopupElement("connection_container").style.display = "none";
     getPopupElement("message_container").style.display = "block";
@@ -290,11 +293,13 @@ function ConnectedToSocket() {
     getPopupElement("group_pass").disabled = true;
     getPopupElement("display_name").disabled = true;
     getPopupElement("group_id").value = groupId;
+    getPopupElement("group_pass").value = groupKey;
     getPopupElement("display_name").value = displayName;
 }
 
 function DisconnectedFromSocket() {
     isConnected = false;
+    EnableJoinButtons();
     getPopupElement("status_icon").style.color = "red";
     getPopupElement("connection_container").style.display = "block";
     getPopupElement("message_container").style.display = "none";
@@ -441,6 +446,16 @@ function openNetflixTab(url, callback) {
 }
 
 // POPUP
+function DisableJoinButtons() {
+    getPopupElement("host").disabled = true;
+    getPopupElement("join").disabled = true;
+}
+
+function EnableJoinButtons() {
+    getPopupElement("host").disabled = false;
+    getPopupElement("join").disabled = false;
+}
+
 function showPopupError(error) {
     setPopupText("error_tag", error);
     setTimeout(() => {

@@ -138,7 +138,7 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
 
     if (serverMessage) {
         var serverChatMessage = document.createElement("div");
-        serverChatMessage.innerHTML = `<p style="color: gray; width: 100%; text-align: center; font-size: 12px;">${message}</p>`;
+        serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px;">${message}</p>`;
         container.append(serverChatMessage);
         return;
     }
