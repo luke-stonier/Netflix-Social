@@ -8,6 +8,7 @@ var loadingLoop;
 function setup() {
     startCheckLoadingLoop();
     createMessageButtons();
+    createAvatarButtons();
 }
 
 function dataModel() {
@@ -23,6 +24,7 @@ chrome.runtime.onConnect.addListener((port) => {
     if (port.onMessage.hasListeners()) { return; }
     port.onDisconnect.addListener((port) => {
         UnregisterChat();
+        UnregisterAvatar();
         clearInterval(loadingLoop);
         portMessage = "closed";
         openPort = null;
@@ -54,25 +56,29 @@ chrome.runtime.onConnect.addListener((port) => {
 
         if (message.data.action == "sync_time")
             seekToPoint(message.data.sync_time);
+
+        if (message.data.action == "avatar-changed")
+            UpdateAvatarInChat(message);
     });
 });
 
 // INTERACTION
 function ConnectedToGroup(message) {
-    AddMessageToChat(`${message.data.displayName} has joined the group`, 'Server', false, true);
+    console.log(message);
+    AddServerMessage(`${message.data.displayName} has joined the group`, null);
     OpenChat();
 }
 
 function DisconnectedFromGroup(message) {
-    AddMessageToChat(`${message.data.displayName} has left the group`, 'Server', false, true);
+    AddServerMessage(`${message.data.displayName} has left the group`, null);
 }
 
 function ProcessChatMessage(message) {
-    AddMessageToChat(message.data.message, message.data.displayName, message.data.isClient, false);
+    AddMessageToChat(message);
 }
 
 function PlayVideo(message) {
-    AddMessageToChat(`Host started the video`, 'Server', false, true);
+    AddServerMessage(`Host started the video`, null);
     if (!message.data.isSender)
         seekToPoint(message.data.sync_time);
 
@@ -84,7 +90,7 @@ function PlayVideo(message) {
 }
 
 function PauseVideo(message) {
-    AddMessageToChat(`Host paused the video`, 'Server', false, true);
+    AddServerMessage(`Host paused the video`, null);
     if (!message.data.isSender)
         seekToPoint(message.data.sync_time);
 
@@ -127,7 +133,7 @@ function startCheckLoadingLoop() {
 }
 
 // CHAT
-function AddMessageToChat(message, senderName, isClient, serverMessage) {
+function AddServerMessage(message, imageUrl) {
     OpenChat();
     var container = document.getElementById("netflix_social_chat");
     if (!container) return;
@@ -136,39 +142,54 @@ function AddMessageToChat(message, senderName, isClient, serverMessage) {
     player_container.style.right = "15%";
     player_container.style.width = "auto";
 
-    if (serverMessage) {
-        var serverChatMessage = document.createElement("div");
-        serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px;">${message}</p>`;
-        container.append(serverChatMessage);
-        return;
+    var serverChatMessage = document.createElement("div");
+    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px; margin: 0;">${message}</p>`;
+    if (imageUrl) {
+        serverChatMessage.innerHTML += `<div style="text-align: center;">
+            <img src="${imageUrl}"/>
+        </div>`;
     }
+    container.append(serverChatMessage);
+}
+
+function AddMessageToChat(message) {
+    OpenChat();
+    var container = document.getElementById("netflix_social_chat");
+    if (!container) return;
+    var player_container = document.getElementsByClassName("NFPlayer")[0];
+    if (!player_container) return;
+    player_container.style.right = "15%";
+    player_container.style.width = "auto";
 
     var chatMessageContainer = document.createElement("div");
-    chatMessageContainer.style.margin = "10px 5px";
-    chatMessageContainer.style.overflow = "auto";
+    chatMessageContainer.style.margin = "0px 5px";
+    chatMessageContainer.style.display = "flex";
+    chatMessageContainer.innerHTML = `
+    <div style="width: 15%; padding-right: 5px;">
+        <img class="${message.sender}" style="width: 100%; vertical-align: middle;" src="${message.data.displayImage}"/>
+    </div>`;
 
     var chatMessage = document.createElement("div");
-    chatMessage.style.borderRadius = "8px";
-    chatMessage.style.padding = "10px";
-    chatMessage.style.width = "70%";
-    chatMessage.style.background = "red";
-    chatMessage.style.fontSize="15px";
-    if (isClient)
-        chatMessage.style.marginLeft = "auto";
-    chatMessage.innerText = message;
+    chatMessage.style.padding = "5px 0";
+    chatMessage.style.width = "85%";
+    chatMessage.style.fontSize = "15px";
+    var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
+    var emojiCount = message.data.message.match(regex);
+    if (emojiCount && emojiCount.length == (message.data.message.length / 2))
+        chatMessage.style.fontSize = "25px";
+
+    chatMessage.innerHTML = `<div style="word-break: break-word;">${message.data.message}</div>`;
 
     var chatMessageSender = document.createElement("div");
-    chatMessageSender.innerText = senderName;
-    chatMessageSender.style.fontSize="12px";
+    chatMessageSender.innerText = message.data.displayName;
+    chatMessageSender.style.fontSize = "12px";
     chatMessageSender.style.margin = "0";
     chatMessageSender.style.padding = "2px 2px 0 2px";
     chatMessageSender.style.color = "gray";
-    if (isClient)
-        chatMessageSender.style.float = "right";
     chatMessageSender.style.overflow = "hidden";
 
     chatMessageContainer.append(chatMessage);
-    chatMessageContainer.append(chatMessageSender);
+    chatMessage.append(chatMessageSender);
 
     container.append(chatMessageContainer);
 
@@ -184,6 +205,13 @@ function UnregisterChat() {
     messageTrigger.parentNode.removeChild(messageTrigger);
 }
 
+function UnregisterAvatar() {
+    var avatarTrigger = document.getElementById("netflix_social_avatar_change");
+    if (!avatarTrigger) return;
+    avatarTrigger.removeEventListener("click", sendChatMessage);
+    avatarTrigger.parentNode.removeChild(avatarTrigger);
+}
+
 function createMessageButtons() {
     var messageTrigger = document.getElementById("netflix_social_message_sync");
     if (messageTrigger) {
@@ -197,6 +225,46 @@ function createMessageButtons() {
     messageTrigger.addEventListener("click", sendChatMessage);
 
     document.body.append(messageTrigger);
+}
+
+function createAvatarButtons() {
+    var avatarTrigger = document.getElementById("netflix_social_avatar_change");
+    if (avatarTrigger) {
+        avatarTrigger.parentNode.removeChild(avatarTrigger);
+    }
+
+    avatarTrigger = document.createElement("button");
+    avatarTrigger.id = "netflix_social_avatar_change";
+    avatarTrigger.style.display = "none";
+    avatarTrigger.addEventListener("click", (event) => {
+        sendChangeAvatarMessage(event.target.innerText);
+    });
+
+    document.body.append(avatarTrigger);
+}
+
+function sendChangeAvatarMessage(avatarUrl) {
+    var message = {
+        data: {
+            action: 'update-avatar',
+            displayImage: avatarUrl
+        }
+    };
+
+    if (portConnected) {
+        openPort.postMessage(message);
+    } else {
+        console.warn("Port is not connected, cant send avatar change message");
+    }
+}
+
+function UpdateAvatarInChat(message) {
+    AddServerMessage(`${message.data.displayName} updated their avatar`, message.data.displayImage);
+    var previousMessageAvatars = document.getElementsByClassName(message.data.user_id);
+    for (var i = 0; i < previousMessageAvatars.length; i++) {
+        var avatar = previousMessageAvatars[i];
+        avatar.setAttribute('src', message.data.displayImage);
+    }
 }
 
 function sendChatMessage(event) {

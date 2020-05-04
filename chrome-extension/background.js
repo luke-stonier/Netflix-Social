@@ -35,7 +35,6 @@ function dataModel(_data) {
     };
 }
 
-
 chrome.runtime.onInstalled.addListener(function () {
     // runs when the extension has been installed
 });
@@ -224,7 +223,7 @@ function processServerMessage(message) {
 
     // Process clients leaving/joining
     var action = message.data.action;
-    if (action == "added" || action == "remove") {
+    if (action == "added" || action == "remove" || action == "avatar-changed") {
         sendMessageToNetflixPage(message);
     }
 
@@ -380,6 +379,9 @@ function createNetflixPagePortConnection() {
         if (message.data.action != "return_sync_time") {
             if (message.data.action == "message")
                 sendGroupChatMessage(message.data.message);
+
+            if (message.data.action == "update-avatar")
+                sendSocketMessage(message);
 
             if (message.data.action == "loaded")
                 videoLoaded();
