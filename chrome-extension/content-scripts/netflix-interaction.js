@@ -143,13 +143,18 @@ function AddServerMessage(message, imageUrl) {
     player_container.style.width = "auto";
 
     var serverChatMessage = document.createElement("div");
-    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px; margin: 0;">${message}</p>`;
+    var margin = imageUrl ? 0 : 10;
+    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px; margin: ${margin} 0 ${margin};">${message}</p>`;
     if (imageUrl) {
-        serverChatMessage.innerHTML += `<div style="text-align: center;">
-            <img src="${imageUrl}"/>
+        serverChatMessage.innerHTML += `<div style="text-align: center; margin: 10px 0;">
+            <img style="width: 15%;" src="${imageUrl}"/>
         </div>`;
     }
     container.append(serverChatMessage);
+
+    // auto scroll
+    var chatContainer = document.getElementById('netflix_social_chat_container');
+    chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
 }
 
 function AddMessageToChat(message) {
@@ -162,7 +167,7 @@ function AddMessageToChat(message) {
     player_container.style.width = "auto";
 
     var chatMessageContainer = document.createElement("div");
-    chatMessageContainer.style.margin = "0px 5px";
+    chatMessageContainer.style.margin = "5px";
     chatMessageContainer.style.display = "flex";
     chatMessageContainer.innerHTML = `
     <div style="width: 15%; padding-right: 5px;">

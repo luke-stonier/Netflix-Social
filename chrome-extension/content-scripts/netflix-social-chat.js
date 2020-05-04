@@ -75,13 +75,29 @@ function attachWindowToElement(wrapper) {
         <p style="font-size: 20px; margin: 0;">Select an avatar</p>
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Dorothy.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/DarthVader.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Dorothy.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/DarthVader.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Dorothy.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Baymax.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/CaptainAmerica.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Catwoman.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Colossus.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Cyclops.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Deadpool.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Flash.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Groot.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/HarleyQuin.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hellboy.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hulk.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Ironman.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Joker.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Leonardo.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Raphael.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Robocop.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Spiderman.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Storm.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Superman.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Thor.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wolverine.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png" /></button>
         </div>
     </div>`;
 
@@ -255,11 +271,13 @@ function attachWindowToElement(wrapper) {
             padding: 0;
             border: none;
             cursor: pointer;
-            width: 25%;
+            width: 15%;
+            margin: 5px;
         }
         
         .avatar-icon img {
             width: 100%;
+            flex: 1 0 21%; /* explanation below */
         }`;
         document.getElementsByTagName('head')[0].appendChild(style);
     }
