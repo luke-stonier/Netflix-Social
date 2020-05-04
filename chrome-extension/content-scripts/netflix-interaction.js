@@ -143,10 +143,10 @@ function AddServerMessage(message, imageUrl) {
     player_container.style.width = "auto";
 
     var serverChatMessage = document.createElement("div");
-    var margin = imageUrl ? 0 : 10;
-    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; font-size: 12px; margin: ${margin} 0 ${margin};">${message}</p>`;
+    var padding = imageUrl ? 0 : 10;
+    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; margin: 0; font-size: 12px; padding: 10px 0 ${padding};">${message}</p>`;
     if (imageUrl) {
-        serverChatMessage.innerHTML += `<div style="text-align: center; margin: 10px 0;">
+        serverChatMessage.innerHTML += `<div style="text-align: center; padding: 10px 0;">
             <img style="width: 15%;" src="${imageUrl}"/>
         </div>`;
     }
@@ -166,37 +166,42 @@ function AddMessageToChat(message) {
     player_container.style.right = "15%";
     player_container.style.width = "auto";
 
+    // message container
+    var messageContainer = document.createElement("div");
+
+    // icon container
     var chatMessageContainer = document.createElement("div");
-    chatMessageContainer.style.margin = "5px";
+    chatMessageContainer.style.padding = "5px";
     chatMessageContainer.style.display = "flex";
     chatMessageContainer.innerHTML = `
-    <div style="width: 15%; padding-right: 5px;">
+    <div style="width: 15%; padding-right: 10px;">
         <img class="${message.sender}" style="width: 100%; vertical-align: middle;" src="${message.data.displayImage}"/>
     </div>`;
 
+
+    // actual message
     var chatMessage = document.createElement("div");
     chatMessage.style.padding = "5px 0";
-    chatMessage.style.width = "85%";
-    chatMessage.style.fontSize = "15px";
+    var fontSize = "15px"
     var regex = /(?:[\u2700-\u27bf]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\u0023-\u0039]\ufe0f?\u20e3|\u3299|\u3297|\u303d|\u3030|\u24c2|\ud83c[\udd70-\udd71]|\ud83c[\udd7e-\udd7f]|\ud83c\udd8e|\ud83c[\udd91-\udd9a]|\ud83c[\udde6-\uddff]|\ud83c[\ude01-\ude02]|\ud83c\ude1a|\ud83c\ude2f|\ud83c[\ude32-\ude3a]|\ud83c[\ude50-\ude51]|\u203c|\u2049|[\u25aa-\u25ab]|\u25b6|\u25c0|[\u25fb-\u25fe]|\u00a9|\u00ae|\u2122|\u2139|\ud83c\udc04|[\u2600-\u26FF]|\u2b05|\u2b06|\u2b07|\u2b1b|\u2b1c|\u2b50|\u2b55|\u231a|\u231b|\u2328|\u23cf|[\u23e9-\u23f3]|[\u23f8-\u23fa]|\ud83c\udccf|\u2934|\u2935|[\u2190-\u21ff])/g;
     var emojiCount = message.data.message.match(regex);
     if (emojiCount && emojiCount.length == (message.data.message.length / 2))
-        chatMessage.style.fontSize = "25px";
+        fontSize = "25px";
+    chatMessage.innerHTML = `<div style="word-break: break-word; color: white; font-size: ${fontSize}">${message.data.message}</div>`;
 
-    chatMessage.innerHTML = `<div style="word-break: break-word;">${message.data.message}</div>`;
-
+    // sender name
     var chatMessageSender = document.createElement("div");
     chatMessageSender.innerText = message.data.displayName;
     chatMessageSender.style.fontSize = "12px";
     chatMessageSender.style.margin = "0";
-    chatMessageSender.style.padding = "2px 2px 0 2px";
     chatMessageSender.style.color = "gray";
     chatMessageSender.style.overflow = "hidden";
 
-    chatMessageContainer.append(chatMessage);
-    chatMessage.append(chatMessageSender);
-
-    container.append(chatMessageContainer);
+    // add to dom
+    chatMessageContainer.append(chatMessageSender);
+    chatMessageSender.append(chatMessage);
+    messageContainer.append(chatMessageContainer);
+    container.append(messageContainer);
 
     // auto scroll
     var chatContainer = document.getElementById('netflix_social_chat_container');

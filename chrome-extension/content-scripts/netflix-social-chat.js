@@ -74,30 +74,30 @@ function attachWindowToElement(wrapper) {
     iconContainer.innerHTML = `<div>
         <p style="font-size: 20px; margin: 0;">Select an avatar</p>
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Baymax.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/CaptainAmerica.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Catwoman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Colossus.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Cyclops.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Deadpool.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Flash.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Groot.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/HarleyQuin.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hellboy.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hulk.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Ironman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Joker.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Leonardo.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Raphael.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Robocop.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Spiderman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Storm.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Superman.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Thor.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wolverine.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Baymax.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/CaptainAmerica.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Catwoman.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Colossus.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Cyclops.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Deadpool.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Flash.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Groot.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/HarleyQuin.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hellboy.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hulk.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Ironman.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Joker.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Leonardo.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Raphael.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Robocop.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Spiderman.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Storm.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Superman.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Thor.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wolverine.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png?t=1" /></button>
         </div>
     </div>`;
 
