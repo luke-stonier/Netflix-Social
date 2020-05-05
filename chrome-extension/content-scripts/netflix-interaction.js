@@ -64,7 +64,6 @@ chrome.runtime.onConnect.addListener((port) => {
 
 // INTERACTION
 function ConnectedToGroup(message) {
-    console.log(message);
     AddServerMessage(`${message.data.displayName} has joined the group`, null);
     OpenChat();
 }
@@ -146,18 +145,21 @@ function AddServerMessage(message, imageUrl) {
     var padding = imageUrl ? 0 : 10;
     serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; margin: 0; font-size: 12px; padding: 10px 0 ${padding};">${message}</p>`;
     if (imageUrl) {
-        serverChatMessage.innerHTML += `<div style="text-align: center; padding: 10px 0;">
+        serverChatMessage.innerHTML += `<div style="text-align: center; padding: 10px 0 0;">
             <img style="width: 15%;" src="${imageUrl}"/>
         </div>`;
     }
     container.append(serverChatMessage);
 
     // auto scroll
-    var chatContainer = document.getElementById('netflix_social_chat_container');
-    chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
+    setTimeout(() => {
+        var chatContainer = document.getElementById('netflix_social_chat_container');
+        chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
+    }, 500);
 }
 
 function AddMessageToChat(message) {
+    console.log(message);
     OpenChat();
     var container = document.getElementById("netflix_social_chat");
     if (!container) return;
@@ -175,7 +177,7 @@ function AddMessageToChat(message) {
     chatMessageContainer.style.display = "flex";
     chatMessageContainer.innerHTML = `
     <div style="width: 15%; padding-right: 10px;">
-        <img class="${message.sender}" style="width: 100%; vertical-align: middle;" src="${message.data.displayImage}"/>
+        <img class="${message.data.user_id}" style="width: 100%; vertical-align: middle;" src="${message.data.displayImage}"/>
     </div>`;
 
 
@@ -204,8 +206,10 @@ function AddMessageToChat(message) {
     container.append(messageContainer);
 
     // auto scroll
-    var chatContainer = document.getElementById('netflix_social_chat_container');
-    chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
+    setTimeout(() => {
+        var chatContainer = document.getElementById('netflix_social_chat_container');
+        chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
+    }, 500);
 }
 
 function UnregisterChat() {
@@ -271,6 +275,8 @@ function sendChangeAvatarMessage(avatarUrl) {
 function UpdateAvatarInChat(message) {
     AddServerMessage(`${message.data.displayName} updated their avatar`, message.data.displayImage);
     var previousMessageAvatars = document.getElementsByClassName(message.data.user_id);
+    console.log(message);
+    console.log(previousMessageAvatars);
     for (var i = 0; i < previousMessageAvatars.length; i++) {
         var avatar = previousMessageAvatars[i];
         avatar.setAttribute('src', message.data.displayImage);

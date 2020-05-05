@@ -344,6 +344,8 @@ function changeAvatar(avatarSrc) {
     avatarSync.innerText = avatarSrc;
     avatarSync.click();
     hideIconSelectMenu();
+    var chatBar = document.getElementById("netflix_social_chat_message");
+    chatBar.focus();
 }
 
 function sendMessage() {
