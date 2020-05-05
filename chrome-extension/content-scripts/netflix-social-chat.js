@@ -110,7 +110,7 @@ function attachWindowToElement(wrapper) {
     container.style.flexDirection = "column";
     container.style.overflowY = "auto";
     container.style.overflowX = "hidden";
-    container.innerHTML = `<div id="netflix_social_chat" style="width: 100%; flex: 1 1; box-shadow: inset 0px -7px 9px -7px rgba(0,0,0,0.5);">
+    container.innerHTML = `<div id="netflix_social_chat" style="width: 100%; flex: 1 1; box-shadow: inset 0px -7px 9px -7px rgba(0,0,0,0.5); padding: 5px 0 20px;">
     </div>`;
 
     var message_input = document.createElement("div");
