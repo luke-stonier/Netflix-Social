@@ -155,7 +155,7 @@ function AddServerMessage(message, imageUrl) {
     setTimeout(() => {
         var chatContainer = document.getElementById('netflix_social_chat_container');
         chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
-    }, 500);
+    }, 100);
 }
 
 function AddMessageToChat(message) {
@@ -209,7 +209,7 @@ function AddMessageToChat(message) {
     setTimeout(() => {
         var chatContainer = document.getElementById('netflix_social_chat_container');
         chatContainer.scrollTop = chatContainer.scrollHeight - chatContainer.clientHeight;
-    }, 500);
+    }, 100);
 }
 
 function UnregisterChat() {
