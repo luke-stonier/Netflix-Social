@@ -271,7 +271,7 @@ function attachWindowToElement(wrapper) {
             padding: 0;
             border: none;
             cursor: pointer;
-            width: 15%;
+            flex: 1 0 21%;
             margin: 5px;
         }
         
