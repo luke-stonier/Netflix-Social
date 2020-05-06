@@ -37,7 +37,7 @@ function createMessageBox() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
     container.style.width = "auto";
-    container.style.right = "300px"; // 15%
+    container.style.right = "calc(100% - 300px)"; // 15%
     attachWindowToElement(wrapper);;
 }
 

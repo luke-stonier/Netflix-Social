@@ -342,7 +342,7 @@ function OpenChat() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
     container.style.width = "auto";
-    container.style.right = "15%";
+    container.style.right = "calc(100% - 300px)";
     var chatContainer = document.getElementById(NETFLIX_SOCIAL_CHAT_CONTAINER);
     if (!chatContainer) return;
     chatContainer.style.display = "flex";

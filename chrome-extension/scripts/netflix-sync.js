@@ -231,7 +231,7 @@ function createConnectButton() {
         document.getElementById("netflix_party_message_box").style.display="flex";
         connected = true;
         var container = document.getElementsByClassName("NFPlayer")[0];
-        container.style.right = "15%";
+        container.style.right = "calc(100% - 300px)";
         container.style.width = "auto";
         console.log(container);
     });
