@@ -372,7 +372,7 @@ function InjectInteractionScript(callback) {
 function AddChatWindow() {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
-        // send wake message
+        if (!lastServerMessage) return;
         var message = dataModel({ action: 'wake', displayImage: lastServerMessage.data.displayImage });
         sendMessageToNetflixPage(message);
     });
@@ -497,6 +497,11 @@ function setPopupScreen() {
             getPopupElement("pause").style.display = lastServerMessage.data.isHost ? "block" : "none";
             getPopupElement("sync").style.display = lastServerMessage.data.isHost ? "none" : "block";
             setPopupText("live_users", lastServerMessage.data.client_count);
+        } else {
+            getPopupElement("play").style.display = "none";
+            getPopupElement("pause").style.display = "none";
+            getPopupElement("sync").style.display = "none";
+            setPopupText("live_users", "No Data");
         }
     } else {
         DisconnectedFromSocket();
