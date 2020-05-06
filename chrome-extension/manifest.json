@@ -1,6 +1,7 @@
 {
   "name": "Netflix Social",
   "version": "2.5",
+  "description": "Revolutionising the way you can enjoy online streaming with friends and family.",
   "background": {
     "scripts": [
       "background.js"

@@ -117,6 +117,11 @@ function attachWindowToElement(wrapper) {
             <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png?t=1" /></button>
             <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png?t=1" /></button>
         </div>
+        
+        <div style="font-family: 'Baloo Thambi 2', cursive; user-select: none; background: white; color: black; border: 1px solid grey; border-radius: 25px; padding: 15px; text-align: center; cursor: pointer; margin: 10px 5px 0px;" id="support_us">
+            <img style="height: 15px; vertical-align: middle;" src="https://netflix-social.com/images/patreon.png" /> 
+            <span style="vertical-align: middle; margin: 0 5px; font-size: 15px;">Support us on Patreon</span>
+        </div>
     </div>`;
 
     var container = document.createElement("div");
@@ -193,6 +198,10 @@ function attachWindowToElement(wrapper) {
                 break;
         }
     }
+
+    document.getElementById("support_us").addEventListener('click', () => {
+        window.open("https://www.patreon.com/netflixsocial", '_blank');
+    });
 
     //Avatar
 
