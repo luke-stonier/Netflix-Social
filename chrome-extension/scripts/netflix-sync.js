@@ -72,8 +72,6 @@ function createMessageBox() {
         return;
 
     var wrapper = document.getElementsByClassName("AkiraPlayer")[0];
-    // wrapper.style.display = "flex";
-    var container = document.getElementsByClassName("NFPlayer")[0];
 
     var x = document.getElementById("netflix_party_message_box");
     if (x) return;
@@ -231,8 +229,7 @@ function createConnectButton() {
         document.getElementById("netflix_party_message_box").style.display="flex";
         connected = true;
         var container = document.getElementsByClassName("NFPlayer")[0];
-        // container.style.right = "calc(100% - 300px)";
-        container.style.width = "calc(100% - 300px);";
+        container.style.width = "calc(100% - 300px)";
         console.log(container);
     });
 }

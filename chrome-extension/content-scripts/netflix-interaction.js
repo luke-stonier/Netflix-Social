@@ -143,11 +143,31 @@ function startCheckLoadingLoop() {
         var isLoading = x.innerText;
         if (isLoading == "false") {
             clearInterval(loadingLoop);
-            if (portConnected)
+            if (portConnected) {
                 openPort.postMessage({ data: { action: 'loaded' } });
+                videoLoaded();
+            }
         }
     }, 500);
 }
+
+function videoLoaded() {
+    console.log("LOADED");
+    FitChatToScreen();    
+}
+
+function FitChatToScreen() {
+    var container = document.getElementsByClassName("NFPlayer")[0];
+    console.log(container);
+    if (container) {
+        container.style.width = "calc(100% - 300px)";
+    }
+
+    var chatWindow = document.getElementById("netflix_social_message_box");
+    if (chatWindow)
+        chatWindow.style.left = "calc(100% - 300px)";
+}
+
 
 // CHAT
 function AddServerMessage(message, imageUrl) {
@@ -326,8 +346,7 @@ function sendChatMessage(event) {
 function HideChat() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
-    container.style.width = "100%";
-    container.style.right = "0";
+    container.style.width = "calc(100% - 300px)";
     var chatContainer = document.getElementById(NETFLIX_SOCIAL_CHAT_CONTAINER);
     if (!chatContainer) return;
     chatContainer.style.display = "none";
@@ -339,7 +358,7 @@ function HideChat() {
 function OpenChat() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
-    container.style.width = "calc(100% - 300px);";
+    container.style.width = "calc(100% - 300px)";
     var chatContainer = document.getElementById(NETFLIX_SOCIAL_CHAT_CONTAINER);
     if (!chatContainer) return;
     chatContainer.style.display = "flex";

@@ -11,7 +11,7 @@ function setup() {
 function FitChatToScreen() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (container) {
-        container.style.width = "calc(100% - 300px);";
+        container.style.width = "calc(100% - 300px)";
     }
     var chatWindow = document.getElementById("netflix_social_message_box");
     if (chatWindow)
@@ -35,8 +35,7 @@ function createMessageBox() {
     var wrapper = document.getElementsByClassName("AkiraPlayer")[0];
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
-    container.style.width = "calc(100% - 300px);";
-    // container.style.right = "calc(100% - 300px)"; // 15%
+    container.style.width = "calc(100% - 300px)";
     attachWindowToElement(wrapper);;
 }
 
