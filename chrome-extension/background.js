@@ -181,9 +181,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.addEventListener('close', function (event) {
         console.log("Disconnected from socket");
-        if (event.code != 1006) showPopupError("Disconnected from group");
         DisconnectedFromSocket();
         DisconnectProcess();
+        if (event.code != 1006) showPopupError("Disconnected from group");
     });
 }
 
@@ -219,6 +219,8 @@ function processSocketMessage(message) {
 }
 
 function processServerMessage(message) {
+    if (!user_id)
+        console.log(message);
     user_id = (user_id || message.data.user_id);
     var forClient = message.data.user_id == user_id;
 
@@ -265,6 +267,7 @@ function DisconnectFromSocket() {
     clearInterval(heartbeat);
     heartbeatRunning = false;
     user_id = "";
+    lastServerMessage = null;
     socket.close();
 }
 
