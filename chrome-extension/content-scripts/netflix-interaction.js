@@ -236,6 +236,7 @@ function AddMessageToChat(message) {
     chatMessageSender.style.margin = "0";
     chatMessageSender.style.color = "gray";
     chatMessageSender.style.overflow = "hidden";
+    chatMessageSender.style.width = "85%";
 
     // add to dom
     chatMessageContainer.append(chatMessageSender);
