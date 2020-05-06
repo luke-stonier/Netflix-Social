@@ -161,9 +161,9 @@ function AddServerMessage(message, imageUrl) {
 
     var serverChatMessage = document.createElement("div");
     var padding = imageUrl ? 0 : 10;
-    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; margin: 0; font-size: 12px; padding: 10px 0 ${padding}px;">${message}</p>`;
+    serverChatMessage.innerHTML = `<p style="font-family: 'Baloo Thambi 2', cursive; color: gray; width: 100%; text-align: center; margin: 0; font-size: 12px; padding: 15px 0 ${padding}px;">${message}</p>`;
     if (imageUrl) {
-        serverChatMessage.innerHTML += `<div style="text-align: center; padding: 10px 0 0;">
+        serverChatMessage.innerHTML += `<div style="text-align: center; padding: 10px 0 5px;">
             <img style="width: 15%;" src="${imageUrl}"/>
         </div>`;
     }
@@ -196,7 +196,7 @@ function AddMessageToChat(message) {
 
     // icon container
     var chatMessageContainer = document.createElement("div");
-    chatMessageContainer.style.padding = "5px";
+    chatMessageContainer.style.padding = "10px 5px";
     chatMessageContainer.style.display = "flex";
     chatMessageContainer.innerHTML = `
     <div style="width: 15%; padding-right: 10px;">
