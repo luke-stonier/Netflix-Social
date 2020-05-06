@@ -260,7 +260,7 @@ function attachWindowToElement(wrapper) {
             width: 20%;
         }
         
-        #icon-select-button, #icon-save-button {
+        #icon-select-button {
             outline: none;
             background: none;
             padding: 0;
@@ -268,8 +268,8 @@ function attachWindowToElement(wrapper) {
             cursor: pointer;
         }
         
-        #icon-select-button:hover {
-            
+        #icon-select-button:hover img{
+            filter: contrast(50%);
         }
         
         .avatar-icon {
