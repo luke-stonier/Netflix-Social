@@ -152,20 +152,17 @@ function startCheckLoadingLoop() {
 }
 
 function videoLoaded() {
-    console.log("LOADED");
     FitChatToScreen();    
 }
 
 function FitChatToScreen() {
+    var chatWindow = document.getElementById("netflix_social_message_box");
+    if (!chatWindow) return;
+    chatWindow.style.left = "calc(100% - 300px)";
     var container = document.getElementsByClassName("NFPlayer")[0];
-    console.log(container);
     if (container) {
         container.style.width = "calc(100% - 300px)";
     }
-
-    var chatWindow = document.getElementById("netflix_social_message_box");
-    if (chatWindow)
-        chatWindow.style.left = "calc(100% - 300px)";
 }
 
 
@@ -346,7 +343,7 @@ function sendChatMessage(event) {
 function HideChat() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
-    container.style.width = "calc(100% - 300px)";
+    container.style.width = "100%";
     var chatContainer = document.getElementById(NETFLIX_SOCIAL_CHAT_CONTAINER);
     if (!chatContainer) return;
     chatContainer.style.display = "none";
