@@ -300,7 +300,7 @@ function UpdateAvatarInChat(message) {
     var previousMessageAvatars = document.getElementsByClassName(message.data.user_id);
 
     var avatarImage = document.getElementById('icon-select-image');
-    if (avatarImage)
+    if (avatarImage && message.data.forClient)
         avatarImage.setAttribute('src', message.data.displayImage);
 
     for (var i = 0; i < previousMessageAvatars.length; i++) {
