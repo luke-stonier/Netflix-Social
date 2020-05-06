@@ -99,8 +99,7 @@ function createMessageButtons() {
 function AddMessageToChat(message, senderName, isClient, serverMessage) {
     document.getElementById("netflix_party_message_box").style.display = "flex";
     var player_container = document.getElementsByClassName("NFPlayer")[0];
-    player_container.style.right = "15%";
-    player_container.style.width = "auto";
+    player_container.style.width = "calc(100% - 300px)";
     var container = document.getElementById("netflix_party_chat");
 
     if (serverMessage) {
