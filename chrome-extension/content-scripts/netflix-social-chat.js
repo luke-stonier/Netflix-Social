@@ -5,6 +5,18 @@ var pickingIcon = false;
 
 function setup() {
     createMessageBox();
+    window.onresize = FitChatToScreen();
+}
+
+function FitChatToScreen() {
+    var container = document.getElementsByClassName("NFPlayer")[0];
+    if (container) {
+        container.style.width = "auto";
+        container.style.right = "300px";
+    }
+    var chatWindow = document.getElementById("netflix_social_message_box");
+    if (chatWindow)
+        chatWindow.style.left = "calc(100% - 300px)";
 }
 
 function createMessageBox() {
