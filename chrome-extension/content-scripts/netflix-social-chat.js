@@ -25,7 +25,7 @@ function createMessageBox() {
     var container = document.getElementsByClassName("NFPlayer")[0];
     if (!container) return;
     container.style.width = "auto";
-    container.style.right = "15%";
+    container.style.right = "300px"; // 15%
     attachWindowToElement(wrapper);;
 }
 
@@ -41,7 +41,7 @@ function attachWindowToElement(wrapper) {
     x.style.top = "0px";
     x.style.bottom = "0px";
     x.style.right = "0px";
-    x.style.left = "85%";
+    x.style.left = "calc(100% - 300px)"; // 15%
     x.style.zIndex = 1;
     x.style.overflow = "hidden";
     x.style.display = "flex";
@@ -52,10 +52,10 @@ function attachWindowToElement(wrapper) {
     x.innerHTML = `
     <div style="width: 100%; position: relative;">
         <div style="padding: 10px; font-family: 'Baloo Thambi 2', cursive; display: flex; justify-content: space-between;">
-            <img style="width: 25%;" src="https://www.netflix-social.com/images/NS-Logo-Transparent.png" />
-            <div style="align-self: center;">
-                <button id="icon-select-button">
-                    <i class="material-icons">sentiment_satisfied_alt</i>
+            <img style="width: 25%; align-self: center;" src="https://www.netflix-social.com/images/NS-Logo-Transparent.png" />
+            <div style="align-self: center; width: 25%;">
+                <button id="icon-select-button" style="width: 100%;">
+                    <img style="width: auto; height: 40px; margin: auto;" id="icon-select-image" src="https://www.netflix-social.com/images/NS-Logo-Transparent.png" />
                 </button>
             </div>
         </div>
@@ -74,30 +74,36 @@ function attachWindowToElement(wrapper) {
     iconContainer.innerHTML = `<div>
         <p style="font-size: 20px; margin: 0;">Select an avatar</p>
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Baymax.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/CaptainAmerica.png?t=1" /></button>
+            <!-- AVAILABLE AVATARS -->
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Catwoman.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Colossus.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Cyclops.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Deadpool.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Flash.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Groot.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/HarleyQuin.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hellboy.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hulk.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Ironman.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Joker.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Leonardo.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Raphael.png?t=1" /></button>
+            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Leonardo.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Robocop.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Spiderman.png?t=1" /></button>
             <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Storm.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Superman.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Thor.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wolverine.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png?t=1" /></button>
-            <button class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png?t=1" /></button>
+        </div>
+
+        <p style="font-size: 20px; margin: 10px 0 0;">Donator avatars (coming soon)</p>
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+            <!-- DISABLED AVATARS -->
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Batman.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Baymax.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/CaptainAmerica.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Deadpool.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Flash.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Groot.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/HarleyQuin.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Hulk.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Ironman.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Joker.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Spiderman.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Superman.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Thor.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wolverine.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/WolverinePlain.png?t=1" /></button>
+            <button disabled class="avatar-icon"><img src="https://netflix-social.com/images/User_Icons/Wonderwoman.png?t=1" /></button>
         </div>
     </div>`;
 
@@ -116,6 +122,7 @@ function attachWindowToElement(wrapper) {
     var message_input = document.createElement("div");
     message_input.style.boxShadow = "0px -20px 30px -10px rgba(0,0,0,0.4)";
     message_input.style.zIndex = "100";
+    message_input.id = "netflix_social_message_input";
     message_input.innerHTML = `
     <div style="width: 100%;">
         <div style="width: 100%; display: flex; margin: auto; background: rgb(14, 14, 14); position: relative;">
@@ -278,6 +285,10 @@ function attachWindowToElement(wrapper) {
         .avatar-icon img {
             width: 100%;
             flex: 1 0 21%; /* explanation below */
+        }
+        
+        .avatar-icon:disabled {
+            opacity: 0.3;
         }`;
         document.getElementsByTagName('head')[0].appendChild(style);
     }
@@ -322,6 +333,9 @@ function openIconSelectMenu() {
     if (chatContainer)
         chatContainer.style.display = "none";
 
+    var chatBar = document.getElementById("netflix_social_message_input");
+    chatBar.style.display = "none";
+
     var iconSelectContainer = document.getElementById('netflix_social_icon_select_container');
     if (iconSelectContainer)
         iconSelectContainer.style.display = "flex";
@@ -332,6 +346,10 @@ function hideIconSelectMenu() {
     var iconSelectContainer = document.getElementById('netflix_social_icon_select_container');
     if (iconSelectContainer)
         iconSelectContainer.style.display = "none";
+
+    var chatBar = document.getElementById("netflix_social_message_input");
+    chatBar.style.display = "block";
+    chatBar.focus();
 
     var chatContainer = document.getElementById('netflix_social_chat_container');
     if (chatContainer)

@@ -32,6 +32,8 @@ chrome.runtime.onConnect.addListener((port) => {
     });
     port.onMessage.addListener(function (message) {
         if (!message) return;
+        if (message.data.action == "wake")
+            WakeMessage(message);
 
         if (message.data.action == "added")
             ConnectedToGroup(message);
@@ -63,9 +65,25 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 // INTERACTION
+function WakeMessage(message) {
+    var avatarImage = document.getElementById('icon-select-image');
+    if (avatarImage && message.data.displayImage)
+        avatarImage.setAttribute('src', message.data.displayImage);
+}
+
+function JoinedGroup(message) {
+    var avatarImage = document.getElementById('icon-select-image');
+    if (avatarImage)
+        avatarImage.setAttribute('src', message.data.displayImage);
+}
+
 function ConnectedToGroup(message) {
-    AddServerMessage(`${message.data.displayName} has joined the group`, null);
     OpenChat();
+    if (message.data.forClient) {
+        JoinedGroup(message);
+        return;
+    }
+    AddServerMessage(`${message.data.displayName} has joined the group`, null);
 }
 
 function DisconnectedFromGroup(message) {
@@ -159,7 +177,12 @@ function AddServerMessage(message, imageUrl) {
 }
 
 function AddMessageToChat(message) {
-    console.log(message);
+    if (message.data.isClient) {
+        var avatarImage = document.getElementById('icon-select-image');
+        if (avatarImage)
+            avatarImage.setAttribute('src', message.data.displayImage);
+    }
+
     OpenChat();
     var container = document.getElementById("netflix_social_chat");
     if (!container) return;
@@ -275,8 +298,11 @@ function sendChangeAvatarMessage(avatarUrl) {
 function UpdateAvatarInChat(message) {
     AddServerMessage(`${message.data.displayName} updated their avatar`, message.data.displayImage);
     var previousMessageAvatars = document.getElementsByClassName(message.data.user_id);
-    console.log(message);
-    console.log(previousMessageAvatars);
+
+    var avatarImage = document.getElementById('icon-select-image');
+    if (avatarImage)
+        avatarImage.setAttribute('src', message.data.displayImage);
+
     for (var i = 0; i < previousMessageAvatars.length; i++) {
         var avatar = previousMessageAvatars[i];
         avatar.setAttribute('src', message.data.displayImage);

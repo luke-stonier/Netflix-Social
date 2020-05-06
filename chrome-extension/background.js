@@ -220,9 +220,11 @@ function processSocketMessage(message) {
 
 function processServerMessage(message) {
     user_id = (user_id || message.data.user_id);
+    var forClient = message.data.user_id == user_id;
 
     // Process clients leaving/joining
     var action = message.data.action;
+    message.data.forClient = forClient;
     if (action == "added" || action == "remove" || action == "avatar-changed") {
         sendMessageToNetflixPage(message);
     }
@@ -308,6 +310,7 @@ function DisconnectedFromSocket() {
     getPopupElement("group_id").value = "";
     getPopupElement("group_pass").value = "";
     getPopupElement("display_name").value = "";
+    lastServerMessage = null;
 }
 
 // CORE REQUESTS
@@ -368,7 +371,11 @@ function InjectInteractionScript(callback) {
 
 function AddChatWindow() {
     if (!netflixTab) return;
-    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) { });
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
+        // send wake message
+        var message = dataModel({ action: 'wake', displayImage: lastServerMessage.data.displayImage });
+        sendMessageToNetflixPage(message);
+    });
 }
 
 function createNetflixPagePortConnection() {
