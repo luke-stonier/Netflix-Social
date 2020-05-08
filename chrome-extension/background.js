@@ -233,11 +233,13 @@ function processServerMessage(message) {
         sendMessageToNetflixPage(message);
     }
 
-    if (message.data.user_id != user_id) return;
+    if (message.data.user_id != user_id) { console.log(`${message.data.user_id} - ${user_id}`); return; }
     lastServerMessage = message;
     if (message.data.isHost && !heartbeatRunning)
         StartHeartbeat();
 
+    console.log(`last server message`);
+    console.log(lastServerMessage);
     setPopupScreen();
 
     if (message.data.isHost) return;
@@ -268,7 +270,7 @@ function DisconnectFromSocket() {
         return;
     clearInterval(heartbeat);
     heartbeatRunning = false;
-    user_id = "";
+    user_id = null;
     lastServerMessage = null;
     socket.close();
 }
@@ -316,6 +318,7 @@ function DisconnectedFromSocket() {
     getPopupElement("group_pass").value = "";
     getPopupElement("display_name").value = "";
     lastServerMessage = null;
+    user_id = null;
 }
 
 // CORE REQUESTS
