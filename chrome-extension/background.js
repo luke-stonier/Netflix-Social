@@ -111,8 +111,9 @@ function processPopupMessage(message) {
         displayName = message.data.params.displayName;
         var host = message.data.params.host;
 
-        if (!groupId) { showPopupError("Group Id can not be empty."); return; }
-        if (!displayName) { showPopupError("Display name can not be empty."); return; }
+        if (!groupId) { showPopupError("Group Id can not be empty."); EnableJoinButtons(); return; }
+        if (!groupKey) { showPopupError("Group password can not be empty."); EnableJoinButtons(); return; }
+        if (!displayName) { showPopupError("Display name can not be empty."); EnableJoinButtons(); return; }
         if (host && !getCurrentWatchUrl()) {
             showPopupError("Not a valid netflix page, please ensure you are watching a title.");
             return;
@@ -220,7 +221,8 @@ function processSocketMessage(message) {
 
 function processServerMessage(message) {
     if (!user_id)
-        console.log(message);
+        lastServerMessage = message;
+
     user_id = (user_id || message.data.user_id);
     var forClient = message.data.user_id == user_id;
 
@@ -238,7 +240,7 @@ function processServerMessage(message) {
 
     setPopupScreen();
 
-    if (message.data.isHost) return;    // DON'T PROCESS DATA IF HOST AS THEY PRODUCE IT
+    if (message.data.isHost) return;
     if (message.data.url)
         SyncUrl(message.data.url);
     if (message.data.seek_time)

@@ -249,7 +249,6 @@ function attachWindowToElement(wrapper) {
         });
 
         optionButton.addEventListener("mouseout", (event) => {
-            console.log('out');
             optionButton.style.background = 'rgb(14, 14, 14)';
             if(!event.toElement) return;
             if ((event.toElement.id != "option-menu-action" && event.toElement.id != "netflix_social_chat_message"))
