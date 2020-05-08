@@ -162,7 +162,7 @@ function processPopupMessage(message) {
 }
 
 // SOCKET CONNECTION
-function connectToGroup(address, groupId, groupKey, displayName, watch_url, current_time) {
+function connectToGroup(address, groupId, displayName, watch_url, current_time) {
     socket = new WebSocket(`ws://${address}/?groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seek_time=${current_time}&version=${version}`,
         'echo-protocol');
 
