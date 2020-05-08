@@ -120,9 +120,9 @@ function processPopupMessage(message) {
         }
         getGroupConnectionAddress(groupId, groupKey, (resp) => {
             if (host)
-                getSyncTime((response) => connectToGroup(resp.server, groupId, displayName, getCurrentWatchUrl(), response.data.sync_time));
+                getSyncTime((response) => connectToGroup(resp.server, resp.groupid, displayName, getCurrentWatchUrl(), response.data.sync_time));
             else
-                connectToGroup(resp.server, groupId, displayName, "", 0);
+                connectToGroup(resp.server, resp.groupid, displayName, "", 0);
 
         });
     }
@@ -162,7 +162,7 @@ function processPopupMessage(message) {
 }
 
 // SOCKET CONNECTION
-function connectToGroup(address, groupId, displayName, watch_url, current_time) {
+function connectToGroup(address, groupId, groupKey, displayName, watch_url, current_time) {
     socket = new WebSocket(`ws://${address}/?groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seek_time=${current_time}&version=${version}`,
         'echo-protocol');
 
