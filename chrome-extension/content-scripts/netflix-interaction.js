@@ -1,6 +1,6 @@
 console.log("netflix-interacion.js");
+
 var portConnected = false;
-var portMessage = "start";
 var openPort;
 var NETFLIX_SOCIAL_CHAT_CONTAINER = "netflix_social_message_box";
 var loadingLoop;
@@ -17,7 +17,6 @@ function dataModel() {
 
 chrome.runtime.onConnect.addListener((port) => {
     portConnected = true;
-    portMessage = "open";
     openPort = port;
     clearInterval(loadingLoop);
     setup();
@@ -26,7 +25,6 @@ chrome.runtime.onConnect.addListener((port) => {
         UnregisterChat();
         UnregisterAvatar();
         clearInterval(loadingLoop);
-        portMessage = "closed";
         openPort = null;
         portConnected = false;
     });

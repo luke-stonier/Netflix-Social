@@ -84,6 +84,10 @@ function InjectBasicScripts() {
     }
 }
 
+function getSyncTime(callback) {
+    callback({ data: { sync_time: 0 }});
+}
+
 function processPopupMessage(message) {
     if (!netflixTab) {
         getNetflixTab(t => {
@@ -161,33 +165,201 @@ function processPopupMessage(message) {
     }
 }
 
-// SOCKET CONNECTION
+// CORE REQUESTS
+function getGroupConnectionAddress(groupId, groupKey, callback) {
+    const http = new XMLHttpRequest();
+    const url = `${CORE_NETFLIX_SOCIAL}/group/${groupId}`;
+    http.open("GET", url);
+    if (isDev)
+        http.setRequestHeader("develop_key", "develop");
+    http.setRequestHeader("group-key", groupKey);
+    http.send();
+    http.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+            var resp = JSON.parse(http.responseText);
+            callback(resp);
+        } else if (this.status == 403) {
+            showPopupError("Group password was not correct");
+        }
+    };
+}
+
 function connectToGroup(address, groupId, displayName, watch_url, current_time) {
-    socket = new WebSocket(`ws://${address}/?groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seek_time=${current_time}&version=${version}`,
-        'echo-protocol');
+    var protocol = true ? 'wss' : 'ws';
+    var connectionAddress = `${protocol}://${address}/?groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seek_time=${current_time}&version=${version}`;
+    var message = dataModel({ action: 'connect', connectionAddress: connectionAddress });
+    sendMessageToNetflixPage(message);
+}
 
-    socket.addEventListener('open', function (event) {
-        console.log(`Connected to socket ${address} group -> ${groupId}`);
-        ConnectedToSocket();
-        AddChatWindow();
-    });
+function getCurrentWatchUrl() {
+    if (!netflixTab) { showPopupError("No netflix page open."); return; }
+    if (!netflixTab.url) { return; }
+    netflixURL = new URL(netflixTab.url);
+    var watchId = netflixURL.pathname.replace('/watch', '');
+    var trackId = netflixURL.searchParams.get("trackId");
+    if (!trackId) return;
+    watchUrl = `${watchId}?trackId=${trackId}`;
+    return watchUrl;
+}
 
-    socket.addEventListener('message', function (event) {
-        processSocketMessage(JSON.parse(event.data));
-    });
-
-    socket.addEventListener('error', function (event) {
-        showPopupError("Couldn't connect to group.");
-    });
-
-    socket.addEventListener('close', function (event) {
-        console.log("Disconnected from socket");
-        DisconnectedFromSocket();
-        DisconnectProcess();
-        if (event.code != 1006) showPopupError("Disconnected from group");
+// Connect with netflix API
+function InjectContentScripts(callback) {
+    if (!netflixTab) return;
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject.js' }, function (result) {
+        setTimeout(() => { callback(); }, 100);
     });
 }
 
+
+function InjectInteractionScript(callback) {
+    if (!netflixTab) return;
+    // netflix-interaction
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/chrome-interaction.js' }, function (result) {
+        chrome.tabs.insertCSS(netflixTab.id, { file: 'netflix-social.css' }, () => { });
+        createNetflixPagePortConnection();
+        callback(result);
+    });
+}
+
+function createNetflixPagePortConnection() {
+    if (!netflixTab) return
+    netflixPort = chrome.tabs.connect(netflixTab.id, { name: 'background-netflix-sync' });
+    netflixPortConnected = true;
+    netflixPort.onMessage.addListener(message => handlePortMessage(message));
+    netflixPort.onDisconnect.addListener((port) => {
+        if (port.error) console.log(p.error.message)
+        netflixPortConnected = false;
+    });
+}
+
+function handlePortMessage(message) {
+    if (!message) return;
+}
+
+function sendMessageToNetflixPage(message) {
+    if (!message) return;
+    if (!netflixPortConnected) return;
+    if (!netflixPort) return;
+    netflixPort.postMessage(message);
+}
+
+// Extension Settings
+function getExtensionSettings(callback) {
+    chrome.management.getSelf((res) => {
+        version = `v${res.version}`;
+        if (res.installType == "development") {
+            isDev = true;
+            version += `-dev`;
+        }
+
+        callback();
+    });
+}
+
+// Tab management
+function getNetflixTab(callback) {
+    chrome.tabs.query({ url: "https://www.netflix.com/*" }, function (tabs) {
+        if (tabs.length > 0) {
+            callback(tabs[0]);
+        } else {
+            callback(null);
+        }
+    });
+}
+
+function openNetflixTab(url, callback) {
+    if (netflixTabLoading) return;
+    netflixTabLoading = true;
+    chrome.tabs.create({ url: url }, function (tab) {
+        callback(tab);
+    });
+}
+
+// POPUP
+function ConnectedToSocket() {
+    isConnected = true;
+    EnableJoinButtons();
+    getPopupElement("status_icon").style.color = "lime";
+    getPopupElement("connection_container").style.display = "none";
+    getPopupElement("message_container").style.display = "block";
+    getPopupElement("group_id").disabled = true;
+    getPopupElement("group_pass").disabled = true;
+    getPopupElement("display_name").disabled = true;
+    getPopupElement("group_id").value = groupId;
+    getPopupElement("group_pass").value = groupKey;
+    getPopupElement("display_name").value = displayName;
+}
+
+function DisconnectedFromSocket() {
+    isConnected = false;
+    EnableJoinButtons();
+    getPopupElement("status_icon").style.color = "red";
+    getPopupElement("connection_container").style.display = "block";
+    getPopupElement("message_container").style.display = "none";
+    getPopupElement("group_id").disabled = false;
+    getPopupElement("group_pass").disabled = false;
+    getPopupElement("display_name").disabled = false;
+    getPopupElement("group_id").value = "";
+    getPopupElement("group_pass").value = "";
+    getPopupElement("display_name").value = "";
+    lastServerMessage = null;
+    user_id = null;
+}
+
+function DisableJoinButtons() {
+    getPopupElement("host").disabled = true;
+    getPopupElement("join").disabled = true;
+}
+
+function EnableJoinButtons() {
+    getPopupElement("host").disabled = false;
+    getPopupElement("join").disabled = false;
+}
+
+function showPopupError(error) {
+    setPopupText("error_tag", error);
+    setTimeout(() => {
+        setPopupText("error_tag", "");
+    }, 3000);
+}
+
+function getPopupElement(id) {
+    return popup_view.getElementById(id);
+}
+
+function setPopupText(id, text) {
+    popup_view.getElementById(id).innerText = text;
+}
+
+function getPopupView() {
+    var views = chrome.extension.getViews({
+        type: "popup"
+    });
+    for (var i = 0; i < views.length; i++) {
+        popup_view = views[i].document;
+    }
+}
+
+function setPopupScreen() {
+    if (isConnected) {
+        ConnectedToSocket();
+        if (lastServerMessage) {
+            getPopupElement("play").style.display = lastServerMessage.data.isHost ? "block" : "none";
+            getPopupElement("pause").style.display = lastServerMessage.data.isHost ? "block" : "none";
+            getPopupElement("sync").style.display = lastServerMessage.data.isHost ? "none" : "block";
+            setPopupText("live_users", lastServerMessage.data.client_count);
+        } else {
+            getPopupElement("play").style.display = "none";
+            getPopupElement("pause").style.display = "none";
+            getPopupElement("sync").style.display = "none";
+            setPopupText("live_users", "No Data");
+        }
+    } else {
+        DisconnectedFromSocket();
+    }
+}
+
+/*
 function StartHeartbeat() {
     heartbeatRunning = true;
     heartbeat = setInterval(() => {
@@ -289,55 +461,6 @@ function SyncUrl(url) {
     });
 }
 
-function ConnectedToSocket() {
-    isConnected = true;
-    EnableJoinButtons();
-    getPopupElement("status_icon").style.color = "lime";
-    getPopupElement("connection_container").style.display = "none";
-    getPopupElement("message_container").style.display = "block";
-    getPopupElement("group_id").disabled = true;
-    getPopupElement("group_pass").disabled = true;
-    getPopupElement("display_name").disabled = true;
-    getPopupElement("group_id").value = groupId;
-    getPopupElement("group_pass").value = groupKey;
-    getPopupElement("display_name").value = displayName;
-}
-
-function DisconnectedFromSocket() {
-    isConnected = false;
-    EnableJoinButtons();
-    getPopupElement("status_icon").style.color = "red";
-    getPopupElement("connection_container").style.display = "block";
-    getPopupElement("message_container").style.display = "none";
-    getPopupElement("group_id").disabled = false;
-    getPopupElement("group_pass").disabled = false;
-    getPopupElement("display_name").disabled = false;
-    getPopupElement("group_id").value = "";
-    getPopupElement("group_pass").value = "";
-    getPopupElement("display_name").value = "";
-    lastServerMessage = null;
-    user_id = null;
-}
-
-// CORE REQUESTS
-function getGroupConnectionAddress(groupId, groupKey, callback) {
-    const http = new XMLHttpRequest();
-    const url = `${CORE_NETFLIX_SOCIAL}/group/${groupId}`;
-    http.open("GET", url);
-    if (isDev)
-        http.setRequestHeader("develop_key", "develop");
-    http.setRequestHeader("group-key", groupKey);
-    http.send();
-    http.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            var resp = JSON.parse(http.responseText);
-            callback(resp);
-        } else if (this.status == 403) {
-            showPopupError("Group password was not correct");
-        }
-    };
-}
-
 // NETFLIX PAGE
 function getSyncTime(callback) {
     netflixTabCallback = (response) => {
@@ -347,34 +470,9 @@ function getSyncTime(callback) {
     }
     sendMessageToNetflixPage({ data: { action: 'get_sync_time' } });
 }
+*/
 
-function getCurrentWatchUrl() {
-    if (!netflixTab) { showPopupError("No netflix page open."); return; }
-    if (!netflixTab.url) { return; }
-    netflixURL = new URL(netflixTab.url);
-    var watchId = netflixURL.pathname.replace('/watch', '');
-    var trackId = netflixURL.searchParams.get("trackId");
-    if (!trackId) return;
-    watchUrl = `${watchId}?trackId=${trackId}`;
-    return watchUrl;
-}
-
-function InjectContentScripts(callback) {
-    if (!netflixTab) return;
-    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject.js' }, function (result) {
-        setTimeout(() => { callback(); }, 100);
-    });
-}
-
-function InjectInteractionScript(callback) {
-    if (!netflixTab) return;
-    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-interaction.js' }, function (result) {
-        chrome.tabs.insertCSS(netflixTab.id, { file: 'netflix-social.css' }, () => { });
-        createNetflixPagePortConnection();
-        callback(result);
-    });
-}
-
+/*
 function AddChatWindow() {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
@@ -382,41 +480,6 @@ function AddChatWindow() {
         var message = dataModel({ action: 'wake', displayImage: lastServerMessage.data.displayImage });
         sendMessageToNetflixPage(message);
     });
-}
-
-function createNetflixPagePortConnection() {
-    if (!netflixTab) return
-    netflixPort = chrome.tabs.connect(netflixTab.id, { name: 'background-netflix-sync' });
-    netflixPortConnected = true;
-    netflixPort.onMessage.addListener(function (message) {
-        if (message.data.action != "return_sync_time") {
-            if (message.data.action == "message")
-                sendGroupChatMessage(message.data.message);
-
-            if (message.data.action == "update-avatar")
-                sendSocketMessage(message);
-
-            if (message.data.action == "loaded")
-                videoLoaded();
-        }
-
-
-        // Process other messages
-        if (netflixTabCallback)
-            netflixTabCallback(message);
-    });
-    netflixPort.onDisconnect.addListener((port) => {
-        if (port.error)
-            console.log(p.error.message)
-        netflixPortConnected = false;
-    });
-}
-
-function sendMessageToNetflixPage(message) {
-    if (!message) return;
-    if (!netflixPortConnected) return;
-    if (!netflixPort) return;
-    netflixPort.postMessage(message);
 }
 
 function videoLoaded() {
@@ -427,89 +490,4 @@ function videoLoaded() {
         AddChatWindow();
     }
 }
-
-// Extension Settings
-function getExtensionSettings(callback) {
-    chrome.management.getSelf((res) => {
-        version = `v${res.version}`;
-        if (res.installType == "development") {
-            isDev = true;
-            version += `-dev`;
-        }
-
-        callback();
-    });
-}
-
-// Tab management
-function getNetflixTab(callback) {
-    chrome.tabs.query({ url: "https://www.netflix.com/*" }, function (tabs) {
-        if (tabs.length > 0) {
-            callback(tabs[0]);
-        } else {
-            callback(null);
-        }
-    });
-}
-
-function openNetflixTab(url, callback) {
-    if (netflixTabLoading) return;
-    netflixTabLoading = true;
-    chrome.tabs.create({ url: url }, function (tab) {
-        callback(tab);
-    });
-}
-
-// POPUP
-function DisableJoinButtons() {
-    getPopupElement("host").disabled = true;
-    getPopupElement("join").disabled = true;
-}
-
-function EnableJoinButtons() {
-    getPopupElement("host").disabled = false;
-    getPopupElement("join").disabled = false;
-}
-
-function showPopupError(error) {
-    setPopupText("error_tag", error);
-    setTimeout(() => {
-        setPopupText("error_tag", "");
-    }, 3000);
-}
-
-function getPopupElement(id) {
-    return popup_view.getElementById(id);
-}
-
-function setPopupText(id, text) {
-    popup_view.getElementById(id).innerText = text;
-}
-
-function getPopupView() {
-    var views = chrome.extension.getViews({
-        type: "popup"
-    });
-    for (var i = 0; i < views.length; i++) {
-        popup_view = views[i].document;
-    }
-}
-
-function setPopupScreen() {
-    if (isConnected) {
-        ConnectedToSocket();
-        if (lastServerMessage) {
-            getPopupElement("play").style.display = lastServerMessage.data.isHost ? "block" : "none";
-            getPopupElement("pause").style.display = lastServerMessage.data.isHost ? "block" : "none";
-            getPopupElement("sync").style.display = lastServerMessage.data.isHost ? "none" : "block";
-            setPopupText("live_users", lastServerMessage.data.client_count);
-        } else {
-            getPopupElement("play").style.display = "none";
-            getPopupElement("pause").style.display = "none";
-            getPopupElement("sync").style.display = "none";
-            setPopupText("live_users", "No Data");
-        }
-    } else {
-        DisconnectedFromSocket();
-    }
-}
+*/
