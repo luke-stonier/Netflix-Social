@@ -134,6 +134,20 @@ function attachWindowToElement(wrapper) {
     container.innerHTML = `<div id="netflix_social_chat" style="width: 100%; flex: 1 1; box-shadow: inset 0px -7px 9px -7px rgba(0,0,0,0.5); padding: 5px 0 20px;">
     </div>`;
 
+    var localvideo = document.createElement("video");
+    localvideo.id = "local-video";
+    localvideo.style.width = "100%";
+    localvideo.style.background = "yellow";
+    localvideo.autoplay = true;
+    localvideo.muted = true;
+
+    var remotevideo = document.createElement("video");
+    remotevideo.id = "remote-video";
+    remotevideo.style.width = "100%";
+    remotevideo.style.background = "yellow";
+    remotevideo.autoplay = true;
+    remotevideo.muted = true;
+
     var message_input = document.createElement("div");
     message_input.style.boxShadow = "0px -20px 30px -10px rgba(0,0,0,0.4)";
     message_input.style.zIndex = "100";
