@@ -1,9 +1,10 @@
 {
   "name": "Netflix Social",
-  "version": "3.0",
+  "version": "3.1",
   "description": "Revolutionising the way you can enjoy online streaming with friends and family.",
   "background": {
     "scripts": [
+      "packages/socket.io.js",
       "background.js"
     ],
     "persistent": false
@@ -17,7 +18,9 @@
     "https://www.netflix-social.com/*"
   ],
   "web_accessible_resources": [
-    "/content-scripts/netflix-sync.js"
+    "/content-scripts/netflix-sync.js",
+    "/pages/content-page.html",
+    "/content-scripts/inject-stream.js"
   ],
   "browser_action": {
     "default_popup": "pages/index.html",

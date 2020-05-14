@@ -4,7 +4,7 @@ node_modules/
 platforms/
 
 # NativeScript Template
-*.js.map
+#*.js.map
 !webpack.config.js
 
 # Logs

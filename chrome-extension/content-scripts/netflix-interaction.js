@@ -33,22 +33,26 @@ chrome.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener(function (message) {
         if (!message) return;
         if (message.data.action == "wake")
-            WakeMessage(message);
+            UpdateClient(message);
 
-        if (message.data.action == "added")
+        if (message.data.action == "client-updated")
+            UpdateClient(message);
+
+        if (message.data.action == "client-connected")
             ConnectedToGroup(message);
 
-        if (message.data.action == "remove")
+        if (message.data.action == "client-disconnected")
             DisconnectedFromGroup(message);
 
-        if (message.data.action == "left_group")
-            HideChat();
-
-        if (message.data.action == "message")
-            ProcessChatMessage(message);
+        if (message.data.action == "chat")
+            AddMessageToChat(message);
 
         if (message.data.action == "get_sync_time")
             returnCurrentTime((responseObject) => port.postMessage(responseObject));
+
+        // OLD
+        if (message.data.action == "left_group")
+            HideChat();
 
         if (message.data.action == "play_video")
             PlayVideo(message)
@@ -65,33 +69,21 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 // INTERACTION
-function WakeMessage(message) {
+function UpdateClient(message) {
+    OpenChat();
     var avatarImage = document.getElementById('icon-select-image');
-    if (avatarImage && message.data.displayImage)
-        avatarImage.setAttribute('src', message.data.displayImage);
-}
-
-function JoinedGroup(message) {
-    var avatarImage = document.getElementById('icon-select-image');
-    if (avatarImage)
-        avatarImage.setAttribute('src', message.data.displayImage);
+    if (avatarImage && message.data.client.displayImage)
+        avatarImage.setAttribute('src', message.data.client.displayImage);
 }
 
 function ConnectedToGroup(message) {
+    if (!message.data.client) return;
     OpenChat();
-    if (message.data.forClient) {
-        JoinedGroup(message);
-        return;
-    }
-    AddServerMessage(`${message.data.displayName} has joined the group`, null);
+    AddServerMessage(`${message.data.client.displayName} has joined the group`, null);
 }
 
 function DisconnectedFromGroup(message) {
-    AddServerMessage(`${message.data.displayName} has left the group`, null);
-}
-
-function ProcessChatMessage(message) {
-    AddMessageToChat(message);
+    AddServerMessage(`${message.data.client.displayName} has left the group`, null);
 }
 
 function PlayVideo(message) {
@@ -152,7 +144,7 @@ function startCheckLoadingLoop() {
 }
 
 function videoLoaded() {
-    FitChatToScreen();    
+    FitChatToScreen();
 }
 
 function FitChatToScreen() {
@@ -193,12 +185,6 @@ function AddServerMessage(message, imageUrl) {
 }
 
 function AddMessageToChat(message) {
-    if (message.data.isClient) {
-        var avatarImage = document.getElementById('icon-select-image');
-        if (avatarImage)
-            avatarImage.setAttribute('src', message.data.displayImage);
-    }
-
     OpenChat();
     var container = document.getElementById("netflix_social_chat");
     if (!container) return;
@@ -215,7 +201,7 @@ function AddMessageToChat(message) {
     chatMessageContainer.style.display = "flex";
     chatMessageContainer.innerHTML = `
     <div style="width: 15%; padding-right: 10px;">
-        <img class="${message.data.user_id}" style="width: 100%; vertical-align: middle;" src="${message.data.displayImage}"/>
+        <img class="${message.data.client.id}" style="width: 100%; vertical-align: middle;" src="${message.data.client.displayImage}"/>
     </div>`;
 
 
@@ -231,7 +217,7 @@ function AddMessageToChat(message) {
 
     // sender name
     var chatMessageSender = document.createElement("div");
-    chatMessageSender.innerText = message.data.displayName;
+    chatMessageSender.innerText = message.data.client.displayName;
     chatMessageSender.style.fontSize = "12px";
     chatMessageSender.style.margin = "0";
     chatMessageSender.style.color = "gray";

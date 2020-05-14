@@ -28,6 +28,8 @@ var displayName;
 var user_id;
 var socket;
 
+var mediaStream;
+
 function dataModel(_data) {
     return {
         sender: user_id,
@@ -48,6 +50,7 @@ chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
         // netflix tab was closed...
         netflixTab = null;
         netflixTabLoading = false;
+        DisconnectFromSocket();
     }
 });
 
@@ -100,6 +103,9 @@ function processPopupMessage(message) {
         getExtensionSettings(() => {
             getPopupView();
             setPopupScreen();
+
+            if (mediaStream)
+                getPopupElement('local-video').srcObject = mediaStream;
         });
     }
 
@@ -163,28 +169,85 @@ function processPopupMessage(message) {
 
 // SOCKET CONNECTION
 function connectToGroup(address, groupId, displayName, watch_url, current_time) {
-    socket = new WebSocket(`ws://${address}/?groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seek_time=${current_time}&version=${version}`,
-        'echo-protocol');
+    var _address = false ? `https://${address}` : 'http://localhost:3000';
+    var queryString = `groupId=${groupId}&displayName=${displayName}&watchUrl=${watchUrl}&seekTime=${current_time}&version=${version}`;
+    if (socket && socket.connected) { showPopupError('Already connected to group'); return;}
 
-    socket.addEventListener('open', function (event) {
+    try {
+        socket = io(`${_address}`, {
+            reconnection: false,
+            forceNew: false,
+            query: queryString
+        });
+    } catch (ex) {
+        EnableJoinButtons();
+        DisconnectFromSocket();
+        DisconnectProcess();
+        console.log(ex);
+    } 
+
+    socket.on('connect', (data) => {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
         ConnectedToSocket();
         AddChatWindow();
     });
 
-    socket.addEventListener('message', function (event) {
-        processSocketMessage(JSON.parse(event.data));
+    socket.on('client-connected', (data) => {
+        console.log(data);
+        sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
     });
 
-    socket.addEventListener('error', function (event) {
-        showPopupError("Couldn't connect to group.");
+    socket.on('client-disconnected', (data) => {
+        console.log(data);
+        sendMessageToNetflixPage(dataModel({ action: 'client-disconnected', client: data }));
     });
 
-    socket.addEventListener('close', function (event) {
-        console.log("Disconnected from socket");
+    socket.on('user-data', (data) => {
+        // process our user updates (perhaps change route name)
+        console.log(data);
+        lastServerMessage = data;
+
+        sendMessageToNetflixPage(dataModel({ action: 'client-updated', client: data.client }))
+
+        // Register data locally
+        user_id = (user_id || data.client.id);
+        if (data.client.host && !heartbeatRunning)
+            StartHeartbeat();
+
+        setPopupScreen();
+    });
+
+    socket.on('client-updated', (data) => {
+        // process other users updates eg name/display image
+    });
+
+    socket.on('chat', (data) => {
+        sendMessageToNetflixPage(dataModel({ action: 'chat', message: data.chat, client: data.client }));
+    });
+
+    socket.on('disconnect', (reason) => {
         DisconnectedFromSocket();
         DisconnectProcess();
-        if (event.code != 1006) showPopupError("Disconnected from group");
+
+        if (reason === 'io server disconnect') {
+            console.log('Server disconnect');
+            showPopupError("Server kicked from group");
+        } else if (reason === 'io client disconnect') {
+            console.log('Client disconnected');
+            showPopupError("Disconnected from group");
+        } else {
+            showPopupError("Group connection lost");
+        }
+    });
+
+    socket.on('error', (error) => {
+        showPopupError("Couldn't connect to group.");
+        console.log(error);
+    });
+
+    socket.on('message', (data) => {
+        // JSON.parse(event.data); No need to parse as messages are received as objects
+        processSocketMessage(data);
     });
 }
 
@@ -203,14 +266,19 @@ function StartHeartbeat() {
 }
 
 function sendSocketMessage(data) {
-    if (!socket || socket.readyState != 1) { return; }
-    data = JSON.stringify(data);
-    socket.send(data);
+    if (!socket || !socket.connected) return;
+    //data = JSON.stringify(data);
+    socket.emit('message', data);
+}
+
+function SendSocketMessageToEndpoint(endpoint, data) {
+    if (!socket || !socket.connected) return;
+    socket.emit(endpoint, data);
 }
 
 function sendGroupChatMessage(message) {
-    var data = dataModel({ action: 'message', message: message });
-    sendSocketMessage(data);
+    var chatMessage = dataModel({ action: 'chat', message: message });
+    SendSocketMessageToEndpoint('chat', chatMessage);
 }
 
 function processSocketMessage(message) {
@@ -223,10 +291,8 @@ function processServerMessage(message) {
     if (!user_id)
         lastServerMessage = message;
 
-    user_id = (user_id || message.data.user_id);
     var forClient = message.data.user_id == user_id;
 
-    // Process clients leaving/joining
     var action = message.data.action;
     message.data.forClient = forClient;
     if (action == "added" || action == "remove" || action == "avatar-changed") {
@@ -235,8 +301,6 @@ function processServerMessage(message) {
 
     if (message.data.user_id != user_id) { return; }
     lastServerMessage = message;
-    if (message.data.isHost && !heartbeatRunning)
-        StartHeartbeat();
 
     setPopupScreen();
 
@@ -264,8 +328,7 @@ function DisconnectProcess() {
 }
 
 function DisconnectFromSocket() {
-    if (!socket || socket.readyState != 1)
-        return;
+    if (!socket) return;
     clearInterval(heartbeat);
     heartbeatRunning = false;
     user_id = null;
@@ -355,15 +418,49 @@ function getCurrentWatchUrl() {
     var watchId = netflixURL.pathname.replace('/watch', '');
     var trackId = netflixURL.searchParams.get("trackId");
     if (!trackId) return;
-    watchUrl = `${watchId}?trackId=${trackId}`;
+    watchUrl = `${watchId}&trackId=${trackId}`;
     return watchUrl;
 }
 
 function InjectContentScripts(callback) {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject.js' }, function (result) {
+        createVideoConnection()
         setTimeout(() => { callback(); }, 100);
     });
+}
+
+function createVideoConnection() {
+    chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject-stream.js' }, async function (result) {
+        console.log("do inject");
+        try {
+            mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+            ConnectVideoStream(mediaStream);
+            getPopupElement('local-video').srcObject = mediaStream;
+        } catch (err) {
+            console.error(err);
+        }
+    });
+}
+
+function ConnectVideoStream(stream) {
+    const configuration = {
+        iceServers: [
+            {
+                urls: [
+                    'stun:stun1.l.google.com:19302',
+                    'stun:stun2.l.google.com:19302',
+                ],
+            },
+        ],
+        iceCandidatePoolSize: 10,
+    };
+
+    var peerConnection = new RTCPeerConnection(configuration);
+    mediaStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, mediaStream);
+    });
+    console.log(peerConnection);
 }
 
 function InjectInteractionScript(callback) {
@@ -379,7 +476,7 @@ function AddChatWindow() {
     if (!netflixTab) return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/netflix-social-chat.js' }, function (result) {
         if (!lastServerMessage) return;
-        var message = dataModel({ action: 'wake', displayImage: lastServerMessage.data.displayImage });
+        var message = dataModel({ action: 'wake', client: lastServerMessage.client });
         sendMessageToNetflixPage(message);
     });
 }
@@ -499,10 +596,10 @@ function setPopupScreen() {
     if (isConnected) {
         ConnectedToSocket();
         if (lastServerMessage) {
-            getPopupElement("play").style.display = lastServerMessage.data.isHost ? "block" : "none";
-            getPopupElement("pause").style.display = lastServerMessage.data.isHost ? "block" : "none";
-            getPopupElement("sync").style.display = lastServerMessage.data.isHost ? "none" : "block";
-            setPopupText("live_users", lastServerMessage.data.client_count);
+            getPopupElement("play").style.display = lastServerMessage.client.host ? "block" : "none";
+            getPopupElement("pause").style.display = lastServerMessage.client.host ? "block" : "none";
+            getPopupElement("sync").style.display = lastServerMessage.client.host ? "none" : "block";
+            setPopupText("live_users", lastServerMessage.group.clientCount);
         } else {
             getPopupElement("play").style.display = "none";
             getPopupElement("pause").style.display = "none";
