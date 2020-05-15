@@ -99,7 +99,7 @@ function DisconnectedFromGroup(message) {
 
 function UpdateAvatarInChat(message) {
     AddServerMessage(`${message.data.client.displayName} updated their avatar`, message.data.client.displayImage);
-    var previousMessageAvatars = document.getElementsByClassName(message.data.client.user_id);
+    var previousMessageAvatars = document.getElementsByClassName(message.data.client.id);
     for (var i = 0; i < previousMessageAvatars.length; i++) {
         var avatar = previousMessageAvatars[i];
         avatar.setAttribute('src', message.data.client.displayImage);
