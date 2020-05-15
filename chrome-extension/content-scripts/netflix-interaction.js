@@ -33,7 +33,10 @@ chrome.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener(function (message) {
         if (!message) return;
         if (message.data.action == "wake")
-            UpdateClient(message);
+            ClientCreated(message);
+
+        if (message.data.action == "client-created")
+            ClientCreated(message);
 
         if (message.data.action == "client-updated")
             UpdateClient(message);
@@ -69,8 +72,16 @@ chrome.runtime.onConnect.addListener((port) => {
 });
 
 // INTERACTION
-function UpdateClient(message) {
+function ClientCreated(message) {
     OpenChat();
+    var avatarImage = document.getElementById('icon-select-image');
+    if (avatarImage && message.data.client.displayImage)
+        avatarImage.setAttribute('src', message.data.client.displayImage);
+}
+
+function UpdateClient(message) {
+    UpdateAvatarInChat(message);
+    if (!message.data.localClient) return;
     var avatarImage = document.getElementById('icon-select-image');
     if (avatarImage && message.data.client.displayImage)
         avatarImage.setAttribute('src', message.data.client.displayImage);
@@ -85,6 +96,17 @@ function ConnectedToGroup(message) {
 function DisconnectedFromGroup(message) {
     AddServerMessage(`${message.data.client.displayName} has left the group`, null);
 }
+
+function UpdateAvatarInChat(message) {
+    AddServerMessage(`${message.data.client.displayName} updated their avatar`, message.data.client.displayImage);
+    var previousMessageAvatars = document.getElementsByClassName(message.data.client.user_id);
+    for (var i = 0; i < previousMessageAvatars.length; i++) {
+        var avatar = previousMessageAvatars[i];
+        avatar.setAttribute('src', message.data.client.displayImage);
+    }
+}
+
+// OLD
 
 function PlayVideo(message) {
     AddServerMessage(`Host started the video`, null);
@@ -294,20 +316,6 @@ function sendChangeAvatarMessage(avatarUrl) {
         openPort.postMessage(message);
     } else {
         console.warn("Port is not connected, cant send avatar change message");
-    }
-}
-
-function UpdateAvatarInChat(message) {
-    AddServerMessage(`${message.data.displayName} updated their avatar`, message.data.displayImage);
-    var previousMessageAvatars = document.getElementsByClassName(message.data.user_id);
-
-    var avatarImage = document.getElementById('icon-select-image');
-    if (avatarImage && message.data.forClient)
-        avatarImage.setAttribute('src', message.data.displayImage);
-
-    for (var i = 0; i < previousMessageAvatars.length; i++) {
-        var avatar = previousMessageAvatars[i];
-        avatar.setAttribute('src', message.data.displayImage);
     }
 }
 

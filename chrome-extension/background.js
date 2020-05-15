@@ -203,11 +203,10 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('user-data', (data) => {
-        // process our user updates (perhaps change route name)
         console.log(data);
         lastServerMessage = data;
 
-        sendMessageToNetflixPage(dataModel({ action: 'client-updated', client: data.client }))
+        sendMessageToNetflixPage(dataModel({ action: 'client-created', client: data.client }))
 
         // Register data locally
         user_id = (user_id || data.client.id);
@@ -217,8 +216,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         setPopupScreen();
     });
 
-    socket.on('client-updated', (data) => {
-        // process other users updates eg name/display image
+    socket.on('client-updated', (client) => {
+        var localClient = client.id == user_id;
+        sendMessageToNetflixPage(dataModel({ action: 'client-updated', client: client, localClient: localClient }))
     });
 
     socket.on('chat', (data) => {
@@ -491,7 +491,7 @@ function createNetflixPagePortConnection() {
                 sendGroupChatMessage(message.data.message);
 
             if (message.data.action == "update-avatar")
-                sendSocketMessage(message);
+                SendSocketMessageToEndpoint('update-client', message);
 
             if (message.data.action == "loaded")
                 videoLoaded();
