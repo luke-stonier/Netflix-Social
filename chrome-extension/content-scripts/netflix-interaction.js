@@ -53,7 +53,6 @@ chrome.runtime.onConnect.addListener((port) => {
         if (message.data.action == "get_sync_time")
             returnCurrentTime((responseObject) => port.postMessage(responseObject));
 
-        // OLD
         if (message.data.action == "left_group")
             HideChat();
 
@@ -65,9 +64,6 @@ chrome.runtime.onConnect.addListener((port) => {
 
         if (message.data.action == "sync_time")
             seekToPoint(message.data.sync_time);
-
-        if (message.data.action == "avatar-changed")
-            UpdateAvatarInChat(message);
     });
 });
 
@@ -106,13 +102,8 @@ function UpdateAvatarInChat(message) {
     }
 }
 
-// OLD
-
-function PlayVideo(message) {
+function PlayVideo() {
     AddServerMessage(`Host started the video`, null);
-    if (!message.data.isSender)
-        seekToPoint(message.data.sync_time);
-
     setTimeout(() => {
         var playButton = document.getElementById("netflix_social_play");
         if (playButton)
@@ -120,11 +111,8 @@ function PlayVideo(message) {
     }, 250);
 }
 
-function PauseVideo(message) {
+function PauseVideo() {
     AddServerMessage(`Host paused the video`, null);
-    if (!message.data.isSender)
-        seekToPoint(message.data.sync_time);
-
     setTimeout(() => {
         var pauseButton = document.getElementById("netflix_social_pause");
         if (pauseButton)
@@ -138,6 +126,8 @@ function seekToPoint(time) {
     sync_button.innerText = time;
     sync_button.click();
 }
+
+// OLD
 
 function returnCurrentTime(callback) {
     var playbackTime = document.getElementById("netflix_social_playback_time");

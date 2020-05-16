@@ -22,6 +22,7 @@ var heartbeatRunning = false;
 
 var isConnected = false;
 var lastServerMessage;
+var lastUrl = "";
 var groupId;
 var groupKey;
 var displayName;
@@ -148,10 +149,10 @@ function processPopupMessage(message) {
         var message = dataModel({ action: 'play_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
-            var netflixMessage = message;
+            SendSocketMessageToEndpoint('player-method', message);
+            var netflixMessage = Object.assign({}, message);
             netflixMessage.data.isSender = true;
-            sendMessageToNetflixPage(netflixMessage);
-            sendSocketMessage(message);
+            // sendMessageToNetflixPage(netflixMessage);
         });
     }
 
@@ -159,17 +160,17 @@ function processPopupMessage(message) {
         var message = dataModel({ action: 'pause_video' });
         getSyncTime((response) => {
             message.data.sync_time = response.data.sync_time;
-            var netflixMessage = message;
+            SendSocketMessageToEndpoint('player-method', message);
+            var netflixMessage = Object.assign({}, message);
             netflixMessage.data.isSender = true;
-            sendMessageToNetflixPage(netflixMessage);
-            sendSocketMessage(message);
+            // sendMessageToNetflixPage(netflixMessage);
         });
     }
 }
 
 // SOCKET CONNECTION
 function connectToGroup(address, groupId, displayName, watch_url, current_time) {
-    var _address = true ? `https://${address}` : 'http://localhost:3000';
+    var _address = false ? `https://${address}` : 'http://localhost:3000';
     var queryString = `groupId=${groupId}&displayName=${displayName}&watchUrl=${watchUrl}&seekTime=${current_time}&version=${version}`;
     if (socket && socket.connected) { showPopupError('Already connected to group'); return;}
 
@@ -225,7 +226,16 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         sendMessageToNetflixPage(dataModel({ action: 'chat', message: data.chat, client: data.client }));
     });
 
+    socket.on('player-method', (data) => {
+        sendMessageToNetflixPage(dataModel({ action: data.action }));
+
+        if (data.client.host) return;
+        SyncUrl(data.group.url);
+        SyncTime(data.group.seek_time);
+    });
+
     socket.on('disconnect', (reason) => {
+        console.log(reason);
         DisconnectedFromSocket();
         DisconnectProcess();
 
@@ -236,6 +246,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
             console.log('Client disconnected');
             showPopupError("Disconnected from group");
         } else {
+            console.log('Group connection lost');
             showPopupError("Group connection lost");
         }
     });
@@ -255,12 +266,15 @@ function StartHeartbeat() {
     heartbeatRunning = true;
     heartbeat = setInterval(() => {
         getSyncTime((response) => {
+            var url = getCurrentWatchUrl();
+            if (url != lastUrl) response.data.sync_time = 0;
+            lastUrl = url;
             var message = dataModel({
                 action: 'set_sync_time',
                 sync_time: response.data.sync_time,
-                url: getCurrentWatchUrl()
+                url: url
             });
-            sendSocketMessage(message);
+            SendSocketMessageToEndpoint('heartbeat', message);
         });
     }, 500);
 }
@@ -435,7 +449,7 @@ function createVideoConnection() {
         console.log("do inject");
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-            ConnectVideoStream(mediaStream);
+            ConnectVideoStream();
             getPopupElement('local-video').srcObject = mediaStream;
         } catch (err) {
             console.error(err);
@@ -443,7 +457,7 @@ function createVideoConnection() {
     });
 }
 
-function ConnectVideoStream(stream) {
+function ConnectVideoStream() {
     const configuration = {
         iceServers: [
             {
@@ -460,6 +474,7 @@ function ConnectVideoStream(stream) {
     mediaStream.getTracks().forEach((track) => {
         peerConnection.addTrack(track, mediaStream);
     });
+    console.log(mediaStream);
     console.log(peerConnection);
 }
 
