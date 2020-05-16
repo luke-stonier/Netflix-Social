@@ -65,11 +65,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, info, tab) {
         if (netflixTab && tab.id == netflixTab.id) {
             netflixTab = tab;
             netflixTabLoading = false;
-            if (getCurrentWatchUrl()) {
-                InjectContentScripts(() => {
-                    InjectInteractionScript(() => { });
-                });
-            }
+            InjectBasicScripts();
         }
     }
 });
@@ -80,7 +76,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 });
 
 function InjectBasicScripts() {
-    if (getCurrentWatchUrl()) {
+    if (getCurrentWatchUrl(true)) {
         InjectContentScripts(() => {
             InjectInteractionScript(() => {
             });
@@ -121,13 +117,13 @@ function processPopupMessage(message) {
         if (!groupId) { showPopupError("Group Id can not be empty."); EnableJoinButtons(); return; }
         if (!groupKey) { showPopupError("Group password can not be empty."); EnableJoinButtons(); return; }
         if (!displayName) { showPopupError("Display name can not be empty."); EnableJoinButtons(); return; }
-        if (host && !getCurrentWatchUrl()) {
+        if (host && !getCurrentWatchUrl(true)) {
             showPopupError("Not a valid netflix page, please ensure you are watching a title.");
             return;
         }
         getGroupConnectionAddress(groupId, groupKey, (resp) => {
             if (host)
-                getSyncTime((response) => connectToGroup(resp.server, resp.groupid, displayName, getCurrentWatchUrl(), response.data.sync_time));
+                getSyncTime((response) => connectToGroup(resp.server, resp.groupid, displayName, getCurrentWatchUrl(true), response.data.sync_time));
             else
                 connectToGroup(resp.server, resp.groupid, displayName, "", 0);
 
@@ -269,7 +265,7 @@ function StartHeartbeat() {
     heartbeatRunning = true;
     heartbeat = setInterval(() => {
         getSyncTime((response) => {
-            var url = getCurrentWatchUrl();
+            var url = getCurrentWatchUrl(false);
             if (url != lastUrl) response.data.sync_time = 0;
             lastUrl = url;
             var message = dataModel({
@@ -431,14 +427,14 @@ function getSyncTime(callback) {
     sendMessageToNetflixPage({ data: { action: 'get_sync_time' } });
 }
 
-function getCurrentWatchUrl() {
+function getCurrentWatchUrl(query) {
     if (!netflixTab) { showPopupError("No netflix page open."); return; }
     if (!netflixTab.url) { return; }
     netflixURL = new URL(netflixTab.url);
     var watchId = netflixURL.pathname.replace('/watch', '');
     var trackId = netflixURL.searchParams.get("trackId");
     if (!trackId) return;
-    watchUrl = `${watchId}&trackId=${trackId}`;
+    watchUrl = `${watchId}${query ? '&' : '?'}trackId=${trackId}`;
     return watchUrl;
 }
 
