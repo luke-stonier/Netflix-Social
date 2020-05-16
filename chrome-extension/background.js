@@ -363,6 +363,7 @@ function SyncUrl(url) {
     console.log(`Sync url ${url}`);
     getNetflixTab((t) => {
         var _url = `https://www.netflix.com/watch${url}`;
+        console.log(`${t.url} -> ${_url}`);
         if (!t)
             openNetflixTab(_url, (t) => { netflixTab = t });
 
