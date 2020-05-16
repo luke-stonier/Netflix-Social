@@ -435,6 +435,7 @@ function getCurrentWatchUrl(query) {
     var trackId = netflixURL.searchParams.get("trackId");
     if (!trackId) return;
     watchUrl = `${watchId}${query ? '&' : '?'}trackId=${trackId}`;
+    console.log(watchUrl);
     return watchUrl;
 }
 
