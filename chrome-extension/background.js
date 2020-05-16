@@ -227,6 +227,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('player-method', (data) => {
+        console.log(data);
         sendMessageToNetflixPage(dataModel({ action: data.action }));
 
         if (data.client.host) return;
@@ -351,11 +352,13 @@ function DisconnectFromSocket() {
 }
 
 function SyncTime(time) {
+    console.log(`Sync time ${time}`);
     var message = dataModel({ action: 'sync_time', sync_time: time });
     sendMessageToNetflixPage(message);
 }
 
 function SyncUrl(url) {
+    console.log(`Sync url ${url}`);
     getNetflixTab((t) => {
         var _url = `https://www.netflix.com/watch${url}`;
         if (!t)
