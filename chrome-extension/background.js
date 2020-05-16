@@ -215,6 +215,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
             StartHeartbeat();
 
         setPopupScreen();
+        SyncUrl(data.group.url);
+        SyncTime(data.group.seek_time);
     });
 
     socket.on('client-updated', (client) => {
@@ -230,9 +232,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: data.action }));
 
-        if (data.client.host) return;
-        SyncUrl(data.group.url);
-        SyncTime(data.group.seek_time);
+        // if (data.client.host) return;
+        // SyncUrl(data.group.url);
+        // SyncTime(data.group.seek_time);
     });
 
     socket.on('disconnect', (reason) => {
