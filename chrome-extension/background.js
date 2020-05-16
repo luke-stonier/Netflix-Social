@@ -171,7 +171,7 @@ function processPopupMessage(message) {
 // SOCKET CONNECTION
 function connectToGroup(address, groupId, displayName, watch_url, current_time) {
     var _address = true ? `https://${address}` : 'http://localhost:3000';
-    var queryString = `groupId=${groupId}&displayName=${displayName}&watchUrl=${watchUrl}&seekTime=${current_time}&version=${version}`;
+    var queryString = `groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seekTime=${current_time}&version=${version}`;
     if (socket && socket.connected) { showPopupError('Already connected to group'); return;}
 
     try {
