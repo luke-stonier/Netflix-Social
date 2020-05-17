@@ -1,10 +1,3 @@
-// OPEN NETFLIX WINDOW WHEN POPUP OPENS -- DONE
-// INJECT CONTENT SCRIPTS
-// CONNECT TO CONTENT SCRIPTS THROUGH PORT
-// ACCEPT MESSAGES FROM POPUP
-// CONNECT TO SERVER
-// ACCEPT REQUESTS FROM SERVER
-
 var DEFAULT_NETFLIX_PAGE = "https://www.netflix.com/browse";
 var CORE_NETFLIX_SOCIAL = "https://netflix-party-core.herokuapp.com";
 var isDev = false;
@@ -28,6 +21,7 @@ var groupKey;
 var displayName;
 var user_id;
 var socket;
+var peerConnection;
 
 var mediaStream;
 
@@ -183,10 +177,13 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(ex);
     } 
 
-    socket.on('connect', (data) => {
+    socket.on('connect', async (data) => {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
         ConnectedToSocket();
         AddChatWindow();
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+        socket.emit("start-video", offer);
     });
 
     socket.on('client-connected', (data) => {
@@ -197,6 +194,18 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-disconnected', (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-disconnected', client: data }));
+    });
+
+    socket.on('start-video', async (data) => {
+        if (data.sender == user_id) return;
+        console.log(data);
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+        socket.emit('answer-video', {
+            answer: answer,
+            to: data.sender
+        });
     });
 
     socket.on('user-data', (data) => {
@@ -357,7 +366,6 @@ function SyncUrl(url) {
     console.log(`Sync url ${url}`);
     getNetflixTab((t) => {
         var _url = `https://www.netflix.com/watch${url}`;
-        console.log(`${t.url} -> ${_url}`);
         if (!t)
             openNetflixTab(_url, (t) => { netflixTab = t });
 
@@ -445,7 +453,6 @@ function InjectContentScripts(callback) {
 }
 
 function createVideoConnection() {
-    return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject-stream.js' }, async function (result) {
         console.log("do inject");
         try {
@@ -459,19 +466,7 @@ function createVideoConnection() {
 }
 
 function ConnectVideoStream() {
-    const configuration = {
-        iceServers: [
-            {
-                urls: [
-                    'stun:stun1.l.google.com:19302',
-                    'stun:stun2.l.google.com:19302',
-                ],
-            },
-        ],
-        iceCandidatePoolSize: 10,
-    };
-
-    var peerConnection = new RTCPeerConnection(configuration);
+    peerConnection = new RTCPeerConnection();
     mediaStream.getTracks().forEach((track) => {
         peerConnection.addTrack(track, mediaStream);
     });
