@@ -214,6 +214,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         peerConnection.ontrack = function({streams: [stream] }) {
             const remoteVideo = getPopupElement('remote-video');
             remoteVideo.srcObject = stream;
+            console.log('on track');
         }
         mediaStream.getTracks().forEach((track) => {
             peerConnection.addTrack(track, mediaStream);
@@ -479,6 +480,9 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
+    mediaStream.getTracks().forEach((track) => {
+        peerConnection.addTrack(track, mediaStream);
+    });
     console.log(mediaStream);
     console.log(peerConnection);
 }
