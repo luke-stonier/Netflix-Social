@@ -138,7 +138,7 @@ function processPopupMessage(message) {
     // Connected Messages
     if (message.data.action == "sync") {
         var message = dataModel({ action: 'sync' });
-        SendSocketMessageToEndpoint(sync, message);
+        SendSocketMessageToEndpoint('sync', message);
     }
 
     if (message.data.action == "play") {
@@ -535,7 +535,7 @@ function videoLoaded() {
     if (isConnected) {
         // sync to host
         var message = dataModel({ action: 'sync' });
-        SendSocketMessageToEndpoint(sync, message);
+        SendSocketMessageToEndpoint('sync', message);
         AddChatWindow();
     }
 }
