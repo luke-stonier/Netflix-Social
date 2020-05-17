@@ -480,9 +480,9 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    mediaStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, mediaStream);
-    });
+    // mediaStream.getTracks().forEach((track) => {
+    //     peerConnection.addTrack(track, mediaStream);
+    // });
     console.log(mediaStream);
     console.log(peerConnection);
 }
