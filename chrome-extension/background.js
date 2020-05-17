@@ -138,7 +138,7 @@ function processPopupMessage(message) {
     // Connected Messages
     if (message.data.action == "sync") {
         var message = dataModel({ action: 'sync' });
-        sendSocketMessage(message);
+        SendSocketMessageToEndpoint(sync, message);
     }
 
     if (message.data.action == "play") {
@@ -227,10 +227,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('player-method', (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: data.action }));
-
-        // if (data.client.host) return;
-        // SyncUrl(data.group.url);
-        // SyncTime(data.group.seek_time);
+        SyncUrl(data.group.url);
+        SyncTime(data.group.seek_time);
     });
 
     socket.on('disconnect', (reason) => {
@@ -435,7 +433,6 @@ function getCurrentWatchUrl(query) {
     var trackId = netflixURL.searchParams.get("trackId");
     if (!trackId) return;
     watchUrl = `${watchId}${query ? '&' : '?'}trackId=${trackId}`;
-    console.log(watchUrl);
     return watchUrl;
 }
 
@@ -538,7 +535,7 @@ function videoLoaded() {
     if (isConnected) {
         // sync to host
         var message = dataModel({ action: 'sync' });
-        sendSocketMessage(message);
+        SendSocketMessageToEndpoint(sync, message);
         AddChatWindow();
     }
 }
