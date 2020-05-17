@@ -208,6 +208,10 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         });
     });
 
+    socket.on('answer-video', async (data) => {
+        console.log(data);
+    });
+
     socket.on('user-data', (data) => {
         console.log(data);
         lastServerMessage = data;
