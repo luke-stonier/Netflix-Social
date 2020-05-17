@@ -212,11 +212,12 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
         peerConnection.ontrack = function({streams: [stream] }) {
+            console.log('on track');
             const remoteVideo = getPopupElement('remote-video');
             remoteVideo.srcObject = stream;
-            console.log('on track');
-        }
+        };
         mediaStream.getTracks().forEach((track) => {
+            console.log('add track');
             peerConnection.addTrack(track, mediaStream);
         });
     });
