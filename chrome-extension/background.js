@@ -183,6 +183,11 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         AddChatWindow();
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+        peerConnection.ontrack = function({streams: [stream] }) {
+            console.log('on track');
+            const remoteVideo = getPopupElement('remote-video');
+            remoteVideo.srcObject = stream;
+        };
         socket.emit("start-video", offer);
     });
 
@@ -480,11 +485,6 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    peerConnection.ontrack = function({streams: [stream] }) {
-        console.log('on track');
-        const remoteVideo = getPopupElement('remote-video');
-        remoteVideo.srcObject = stream;
-    };
     // mediaStream.getTracks().forEach((track) => {
     //     peerConnection.addTrack(track, mediaStream);
     // });
