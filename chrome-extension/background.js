@@ -162,7 +162,7 @@ function processPopupMessage(message) {
 function connectToGroup(address, groupId, displayName, watch_url, current_time) {
     var _address = true ? `https://${address}` : 'http://localhost:3000';
     var queryString = `groupId=${groupId}&displayName=${displayName}&watchUrl=${watch_url}&seekTime=${current_time}&version=${version}`;
-    if (socket && socket.connected) { showPopupError('Already connected to group'); return;}
+    if (socket && socket.connected) { showPopupError('Already connected to group'); return; }
 
     try {
         socket = io(`${_address}`, {
@@ -175,7 +175,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         DisconnectFromSocket();
         DisconnectProcess();
         console.log(ex);
-    } 
+    }
 
     socket.on('connect', async (data) => {
         console.log(`Connected to socket ${address} group -> ${groupId}`);
@@ -210,6 +210,14 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.on('answer-video', async (data) => {
         console.log(data);
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+        peerConnection.ontrack = function({streams: [stream] }) {
+            const remoteVideo = getPopupElement('remote-video');
+            remoteVideo.srcObject = stream;
+        }
+        mediaStream.getTracks().forEach((track) => {
+            peerConnection.addTrack(track, mediaStream);
+        });
     });
 
     socket.on('user-data', (data) => {
@@ -471,9 +479,6 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    mediaStream.getTracks().forEach((track) => {
-        peerConnection.addTrack(track, mediaStream);
-    });
     console.log(mediaStream);
     console.log(peerConnection);
 }
