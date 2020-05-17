@@ -445,6 +445,7 @@ function InjectContentScripts(callback) {
 }
 
 function createVideoConnection() {
+    return;
     chrome.tabs.executeScript(netflixTab.id, { file: '/content-scripts/inject-stream.js' }, async function (result) {
         console.log("do inject");
         try {
