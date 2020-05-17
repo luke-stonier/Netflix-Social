@@ -211,10 +211,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('answer-video', async (data) => {
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-        mediaStream.getTracks().forEach((track) => {
-            console.log('add track');
-            peerConnection.addTrack(track, mediaStream);
-        });
+        // AddTracks();
     });
 
     socket.on('user-data', (data) => {
@@ -274,6 +271,13 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('message', (data) => {
         // JSON.parse(event.data); No need to parse as messages are received as objects
         processSocketMessage(data);
+    });
+}
+
+function AddTracks() {
+    mediaStream.getTracks().forEach((track) => {
+        console.log('add track');
+        peerConnection.addTrack(track, mediaStream);
     });
 }
 
