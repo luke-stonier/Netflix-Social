@@ -21,7 +21,7 @@ var groupKey;
 var displayName;
 var user_id;
 var socket;
-var peerConnection;
+var Peer;
 
 var mediaStream;
 
@@ -188,39 +188,26 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         ConnectVideoStream();
         if (!heartbeatRunning) return;
+        peer.on('signal', (data) => {
+            console.log(data);
+        });
+        peer.on('data', (data) => {
+            if (data.type && data.type == "offer") {
+                // send offer to server for newly connected client
+                socket.emit('make-offer', { client: data, offer: data.sdp });
+            }
+            console.log(data);
+        });
+    });
 
-        peerConnection.createOffer()
-            .then(sdp => peerConnection.setLocalDescription(sdp))
-            .then(_ => socket.emit("start-video", { client: data, offer: peerConnection.localDescription }));
+    socket.on('receive-offer', async (data) => {
+        console.log('RTC OFFER');
+        console.log(data);
     });
 
     socket.on('client-disconnected', (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-disconnected', client: data }));
-    });
-
-    socket.on('start-video', async (data) => {
-        if (data.sender == user_id) return;
-        console.log(data);
-        peerConnection.setRemoteDescription(data.offer)
-            .then(() => peerConnection.createAnswer())
-            .then(sdp => peerConnection.setLocalDescription(sdp))
-            .then(_ => socket.emit('answer-video', { answer: peerConnection.localDescription, to: data.sender }));
-        peerConnection.ontrack = function (event) {
-            console.log('on track');
-            console.log(event);
-            // const remoteVideo = getPopupElement('remote-video');
-            // remoteVideo.srcObject = stream;
-        };
-    });
-
-    socket.on('answer-video', async (data) => {
-        console.log(data);
-        peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
-            .then(() => {
-                console.log('set remote description');
-                AddTracks();
-            });
     });
 
     socket.on('user-data', (data) => {
@@ -286,7 +273,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 function AddTracks() {
     mediaStream.getTracks().forEach((track) => {
         console.log('add track');
-        peerConnection.addTrack(track, mediaStream);
     });
 }
 
@@ -371,7 +357,6 @@ function DisconnectProcess() {
 
 function DisconnectFromSocket() {
     if (!socket) return;
-    peerConnection.close();
     clearInterval(heartbeat);
     heartbeatRunning = false;
     user_id = null;
@@ -488,7 +473,15 @@ function createVideoConnection() {
 }
 
 function ConnectVideoStream() {
-    peerConnection = new RTCPeerConnection();
+    if (!mediaStream) {
+        console.log('NO STREAM');
+        return;
+    }
+    peer = new SimplePeer({ initiator: true, stream: mediaStream });
+    peer.on('stream', (stream) => {
+        console.log('ON STREAM');
+        getPopupElement('remote-video').src = window.URL.createObjectURL(stream);
+    });
 }
 
 function InjectInteractionScript(callback) {

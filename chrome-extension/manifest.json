@@ -5,6 +5,7 @@
   "background": {
     "scripts": [
       "packages/socket.io.js",
+      "packages/simple-peer.js",
       "background.js"
     ],
     "persistent": false
