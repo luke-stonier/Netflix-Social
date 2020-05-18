@@ -188,6 +188,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         if (!heartbeatRunning) return;
 
+        ConnectVideoStream();
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
         socket.emit("start-video", offer);
@@ -199,7 +200,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('start-video', async (data) => {
+        console.log('attempt call receive');
         if (data.sender == user_id) return;
+        console.log('call received');
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
         const answer = await peerConnection.createAnswer();
@@ -214,13 +217,15 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
         console.log(peerConnection.ontrack);
-        peerConnection.ontrack = function({streams: [stream] }) {
-            console.log('on track');
-            const remoteVideo = getPopupElement('remote-video');
-            remoteVideo.srcObject = stream;
-        };
+        // peerConnection.ontrack = function({streams: [stream] }) {
+        //     console.log('on track');
+        //     const remoteVideo = getPopupElement('remote-video');
+        //     remoteVideo.srcObject = stream;
+        // };
         peerConnection.onaddstream = function (event) {
             console.log(event);
+            const remoteVideo = getPopupElement('remote-video');
+            remoteVideo.srcObject = event.stream;
         };
         AddTracks();
     });
@@ -373,6 +378,7 @@ function DisconnectProcess() {
 
 function DisconnectFromSocket() {
     if (!socket) return;
+    peerConnection.close();
     clearInterval(heartbeat);
     heartbeatRunning = false;
     user_id = null;
@@ -481,7 +487,6 @@ function createVideoConnection() {
         console.log("do inject");
         try {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-            ConnectVideoStream();
             getPopupElement('local-video').srcObject = mediaStream;
         } catch (err) {
             console.error(err);
@@ -491,8 +496,7 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    console.log(mediaStream);
-    console.log(peerConnection);
+    peerConnection.addStream(mediaStream);
 }
 
 function InjectInteractionScript(callback) {
