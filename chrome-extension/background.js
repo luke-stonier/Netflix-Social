@@ -186,9 +186,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
+        ConnectVideoStream();
         if (!heartbeatRunning) return;
 
-        ConnectVideoStream();
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
         socket.emit("start-video", offer);
