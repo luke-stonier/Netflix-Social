@@ -183,7 +183,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         AddChatWindow();
     });
 
-    socket.on('client-connected', (data) => {
+    socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         const offer = await peerConnection.createOffer();
