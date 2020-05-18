@@ -209,14 +209,19 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         peer.on('signal', (sdp_data) => {
             if (sdp_data.type && sdp_data.type == "offer") {
                 // send offer to server for newly connected client
-                console.log('make offer');
-                socket.emit('make-offer', { client: data.sender, offer: sdp_data.sdp });
+                console.log('make answer');
+                socket.emit('make-answer', { client: data.sender, offer: sdp_data.sdp });
             }
             console.log(sdp_data);
         });
         peer.on('data', (data) => {
             console.log(data);
         });
+    });
+
+    socket.on('receive-answer', async (data) => {
+        console.log('RTC ANSWER');
+        console.log(data);
     });
 
     socket.on('client-disconnected', (data) => {
