@@ -186,16 +186,18 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
+        if (data.id == user_id) return;
         ConnectVideoStream();
         if (!heartbeatRunning) return;
-        peer.on('signal', (data) => {
-            console.log(data);
+        peer.on('signal', (sdp_data) => {
+            if (sdp_data.type && sdp_data.type == "offer") {
+                // send offer to server for newly connected client
+                console.log('make offer');
+                socket.emit('make-offer', { client: data, offer: sdp_data.sdp });
+            }
+            console.log(sdp_data);
         });
         peer.on('data', (data) => {
-            if (data.type && data.type == "offer") {
-                // send offer to server for newly connected client
-                socket.emit('make-offer', { client: data, offer: data.sdp });
-            }
             console.log(data);
         });
     });
@@ -203,6 +205,18 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('receive-offer', async (data) => {
         console.log('RTC OFFER');
         console.log(data);
+        ConnectVideoStream();
+        peer.on('signal', (sdp_data) => {
+            if (sdp_data.type && sdp_data.type == "offer") {
+                // send offer to server for newly connected client
+                console.log('make offer');
+                socket.emit('make-offer', { client: data, offer: sdp_data.sdp });
+            }
+            console.log(sdp_data);
+        });
+        peer.on('data', (data) => {
+            console.log(data);
+        });
     });
 
     socket.on('client-disconnected', (data) => {
