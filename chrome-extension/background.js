@@ -191,7 +191,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
         peerConnection.createOffer()
             .then(sdp => peerConnection.setLocalDescription(sdp))
-            .then(_ => socket.emit("start-video", peerConnection.localDescription));
+            .then(_ => socket.emit("start-video", { client: data, offer: peerConnection.localDescription }));
     });
 
     socket.on('client-disconnected', (data) => {
@@ -218,7 +218,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer))
             .then(() => {
-                console.localDescription('set remote description');
+                console.log('set remote description');
                 AddTracks();
             });
     });
