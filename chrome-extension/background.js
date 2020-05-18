@@ -186,6 +186,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
+        if (!heartbeatRunning) return;
+
         const offer = await peerConnection.createOffer();
         await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
         socket.emit("start-video", offer);
@@ -212,6 +214,14 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
         console.log(peerConnection.ontrack);
+        peerConnection.ontrack = function({streams: [stream] }) {
+            console.log('on track');
+            const remoteVideo = getPopupElement('remote-video');
+            remoteVideo.srcObject = stream;
+        };
+        peerConnection.onaddstream = function (event) {
+            console.log(event);
+        };
         AddTracks();
     });
 
@@ -278,7 +288,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 function AddTracks() {
     mediaStream.getTracks().forEach((track) => {
         console.log('add track');
-        console.log(peerConnection.ontrack);
         peerConnection.addTrack(track, mediaStream);
     });
 }
@@ -482,14 +491,6 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    peerConnection.ontrack = function({streams: [stream] }) {
-        console.log('on track');
-        const remoteVideo = getPopupElement('remote-video');
-        remoteVideo.srcObject = stream;
-    };
-    peerConnection.onaddstream = function (event) {
-        console.log(event);
-    };
     console.log(mediaStream);
     console.log(peerConnection);
 }
