@@ -210,7 +210,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
             if (sdp_data.type && sdp_data.type == "offer") {
                 // send offer to server for newly connected client
                 console.log('make offer');
-                socket.emit('make-offer', { client: data, offer: sdp_data.sdp });
+                socket.emit('make-offer', { client: data.sender, offer: sdp_data.sdp });
             }
             console.log(sdp_data);
         });
