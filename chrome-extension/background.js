@@ -216,18 +216,13 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('answer-video', async (data) => {
         console.log(data);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-        console.log(peerConnection.ontrack);
         // peerConnection.ontrack = function({streams: [stream] }) {
         //     console.log('on track');
         //     const remoteVideo = getPopupElement('remote-video');
         //     remoteVideo.srcObject = stream;
         // };
-        peerConnection.onaddstream = function (event) {
-            console.log(event);
-            const remoteVideo = getPopupElement('remote-video');
-            remoteVideo.srcObject = event.stream;
-        };
-        AddTracks();
+        peerConnection.addStream(mediaStream);
+        // AddTracks();
     });
 
     socket.on('user-data', (data) => {
@@ -290,11 +285,12 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 }
 
-function AddTracks() {
-    mediaStream.getTracks().forEach((track) => {
-        console.log('add track');
-        peerConnection.addTrack(track, mediaStream);
-    });
+function AddStream() {
+    peerConnection.addStream(mediaStream);
+    // mediaStream.getTracks().forEach((track) => {
+    //     console.log('add track');
+    //     peerConnection.addTrack(track, mediaStream);
+    // });
 }
 
 function StartHeartbeat() {
@@ -496,7 +492,12 @@ function createVideoConnection() {
 
 function ConnectVideoStream() {
     peerConnection = new RTCPeerConnection();
-    peerConnection.addStream(mediaStream);
+    peerConnection.onaddstream = function (event) {
+        console.log('ON ADD STREAM');
+        console.log(event);
+        const remoteVideo = getPopupElement('remote-video');
+        remoteVideo.srcObject = event.stream;
+    };
 }
 
 function InjectInteractionScript(callback) {
