@@ -24,6 +24,7 @@ var socket;
 var Peer;
 
 var mediaStream;
+var remoteStream;
 
 function dataModel(_data) {
     return {
