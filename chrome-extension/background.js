@@ -205,6 +205,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('receive-offer', async (data) => {
         console.log('RTC OFFER');
         console.log(data);
+        
+
+        return;
         ConnectVideoStream();
         peer.on('signal', (sdp_data) => {
             if (sdp_data.type && sdp_data.type == "offer") {
@@ -216,6 +219,10 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         });
         peer.on('data', (data) => {
             console.log(data);
+        });
+        peer.on('connect', () => {
+            console.log('CONNECTED');
+            peer.send('TESTING');
         });
     });
 
