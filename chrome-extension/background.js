@@ -204,29 +204,20 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.on('receive-offer', async (data) => {
         console.log('RTC OFFER');
+        console.log(data);
         ConnectVideoStream(false);
-        console.log(peer);
-        console.log(data.offer);
-        return;
         peer.signal(data.offer);
-        peer.on('signal', (sdp_data) => {
-            console.log(sdp_data);
-        });
-        return;
-        peer.on('signal', (sdp_data) => {
-            if (sdp_data.type && sdp_data.type == "offer") {
-                // send offer to server for newly connected client
-                console.log('make answer');
-                socket.emit('make-answer', { client: data.sender, offer: sdp_data.sdp });
-            }
-            console.log(sdp_data);
-        });
-        peer.on('data', (data) => {
-            console.log(data);
-        });
         peer.on('connect', () => {
             console.log('CONNECTED');
             peer.send('TESTING');
+        });
+        peer.on('signal', (sdp_data) => {
+            if (sdp_data.type && sdp_data.type == "answer") {
+                // send offer to server for newly connected client
+                console.log('make answer');
+                socket.emit('make-answer', { client: data.sender, offer: sdp_data });
+            }
+            console.log(sdp_data);
         });
     });
 
@@ -510,7 +501,8 @@ function ConnectVideoStream(initiator) {
     peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
     peer.on('stream', (stream) => {
         console.log('ON STREAM');
-        getPopupElement('remote-video').src = window.URL.createObjectURL(stream);
+        console.log(stream)
+        getPopupElement('remote-video').srcObject = stream;
     });
 }
 
