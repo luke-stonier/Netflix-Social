@@ -190,7 +190,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         ConnectVideoStream(true);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
-            console.log('make offer');
             socket.emit('make-offer', { client: data, offer: sdp_data });
             console.log(sdp_data);
         });
@@ -200,12 +199,9 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('receive-offer', async (data) => {
-        console.log('RTC OFFER');
-        console.log(data);
         ConnectVideoStream(false);
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
-            console.log('make answer');
             socket.emit('make-answer', { client: data.sender, offer: sdp_data });
             console.log(sdp_data);
         });
@@ -215,9 +211,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('receive-answer', async (data) => {
-        console.log('RTC ANSWER');
         peer.signal(data.answer);
-        console.log(data);
     });
 
     socket.on('client-disconnected', (data) => {
@@ -386,6 +380,7 @@ function DisconnectFromSocket() {
     heartbeatRunning = false;
     user_id = null;
     lastServerMessage = null;
+    peer.destroy();
     socket.close();
 }
 
