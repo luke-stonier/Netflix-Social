@@ -190,11 +190,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         ConnectVideoStream(true);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
-            if (sdp_data.type && sdp_data.type == "offer") {
-                // send offer to server for newly connected client
-                console.log('make offer');
-                socket.emit('make-offer', { client: data, offer: sdp_data });
-            }
+            console.log('make offer');
+            socket.emit('make-offer', { client: data, offer: sdp_data });
             console.log(sdp_data);
         });
         peer.on('data', (data) => {
@@ -208,11 +205,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         ConnectVideoStream(false);
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
-            if (sdp_data.type && sdp_data.type == "answer") {
-                // send offer to server for newly connected client
-                console.log('make answer');
-                socket.emit('make-answer', { client: data.sender, offer: sdp_data });
-            }
+            console.log('make answer');
+            socket.emit('make-answer', { client: data.sender, offer: sdp_data });
             console.log(sdp_data);
         });
         peer.on('data', (data) => {
