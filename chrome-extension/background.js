@@ -187,7 +187,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         if (data.id == user_id) return;
-        ConnectVideoStream();
+        ConnectVideoStream(true);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
             if (sdp_data.type && sdp_data.type == "offer") {
@@ -205,10 +205,12 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('receive-offer', async (data) => {
         console.log('RTC OFFER');
         console.log(data);
-        
-
+        ConnectVideoStream(false);
+        peer.signal(data.offer);
+        peer.on('signal', (sdp_data) => {
+            console.log(sdp_data);
+        });
         return;
-        ConnectVideoStream();
         peer.on('signal', (sdp_data) => {
             if (sdp_data.type && sdp_data.type == "offer") {
                 // send offer to server for newly connected client
@@ -498,12 +500,12 @@ function createVideoConnection() {
     });
 }
 
-function ConnectVideoStream() {
+function ConnectVideoStream(initiator) {
     if (!mediaStream) {
         console.log('NO STREAM');
         return;
     }
-    peer = new SimplePeer({ initiator: true, stream: mediaStream });
+    peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
     peer.on('stream', (stream) => {
         console.log('ON STREAM');
         getPopupElement('remote-video').src = window.URL.createObjectURL(stream);
