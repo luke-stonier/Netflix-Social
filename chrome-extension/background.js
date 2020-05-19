@@ -207,10 +207,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         ConnectVideoStream(false);
         peer.signal(data.offer);
-        peer.on('connect', () => {
-            console.log('CONNECTED');
-            peer.send('TESTING');
-        });
         peer.on('signal', (sdp_data) => {
             if (sdp_data.type && sdp_data.type == "answer") {
                 // send offer to server for newly connected client
@@ -219,10 +215,14 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
             }
             console.log(sdp_data);
         });
+        peer.on('data', (data) => {
+            console.log(data);
+        });
     });
 
     socket.on('receive-answer', async (data) => {
         console.log('RTC ANSWER');
+        peer.signal(data.answer);
         console.log(data);
     });
 
@@ -291,9 +291,19 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 }
 
-function AddTracks() {
-    mediaStream.getTracks().forEach((track) => {
-        console.log('add track');
+function ConnectVideoStream(initiator) {
+    if (!mediaStream) {
+        console.log('NO STREAM');
+        return;
+    }
+    peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
+    peer.on('stream', (stream) => {
+        console.log('ON STREAM');
+        console.log(stream)
+        getPopupElement('remote-video').srcObject = stream;
+    });
+    peer.on('connect', () => {
+        console.log('CONNECTED');
     });
 }
 
@@ -490,19 +500,6 @@ function createVideoConnection() {
         } catch (err) {
             console.error(err);
         }
-    });
-}
-
-function ConnectVideoStream(initiator) {
-    if (!mediaStream) {
-        console.log('NO STREAM');
-        return;
-    }
-    peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
-    peer.on('stream', (stream) => {
-        console.log('ON STREAM');
-        console.log(stream)
-        getPopupElement('remote-video').srcObject = stream;
     });
 }
 
