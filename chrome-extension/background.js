@@ -97,6 +97,9 @@ function processPopupMessage(message) {
 
             if (mediaStream)
                 getPopupElement('local-video').srcObject = mediaStream;
+
+            if (remoteStream)
+                getPopupElement('remote-video').srcObject = remoteStream;
         });
     }
 
@@ -284,7 +287,8 @@ function ConnectVideoStream(initiator) {
     }
     peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
     peer.on('stream', (stream) => {
-        getPopupElement('remote-video').srcObject = stream;
+        remoteStream = stream;
+        getPopupElement('remote-video').srcObject = remoteStream;
     });
     peer.on('connect', () => {
         console.log('CONNECTED');
