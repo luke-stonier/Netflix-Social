@@ -284,8 +284,6 @@ function ConnectVideoStream(initiator) {
     }
     peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
     peer.on('stream', (stream) => {
-        console.log('ON STREAM');
-        console.log(stream)
         getPopupElement('remote-video').srcObject = stream;
     });
     peer.on('connect', () => {
