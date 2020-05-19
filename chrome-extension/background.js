@@ -193,7 +193,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
             if (sdp_data.type && sdp_data.type == "offer") {
                 // send offer to server for newly connected client
                 console.log('make offer');
-                socket.emit('make-offer', { client: data, offer: sdp_data.sdp });
+                socket.emit('make-offer', { client: data, offer: sdp_data });
             }
             console.log(sdp_data);
         });
@@ -204,8 +204,10 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
     socket.on('receive-offer', async (data) => {
         console.log('RTC OFFER');
-        console.log(data);
         ConnectVideoStream(false);
+        console.log(peer);
+        console.log(data.offer);
+        return;
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
             console.log(sdp_data);
