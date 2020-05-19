@@ -191,7 +191,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
             socket.emit('make-offer', { client: data, offer: sdp_data });
-            console.log(sdp_data);
         });
         peer.on('data', (data) => {
             console.log(data);
@@ -203,7 +202,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
             socket.emit('make-answer', { client: data.sender, offer: sdp_data });
-            console.log(sdp_data);
         });
         peer.on('data', (data) => {
             console.log(data);
