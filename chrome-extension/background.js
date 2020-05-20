@@ -282,14 +282,14 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 }
 
 function ConnectVideoStream(initiator) {
+    console.log('CONNECT VIDEO STREAM (CREATE PEER)');
     if (!mediaStream) {
         console.log('NO STREAM');
         return;
     }
     peer = new SimplePeer({
         initiator: initiator,
-        stream: mediaStream,
-        trickle: false
+        stream: mediaStream
     });
     peer.on('stream', (stream) => {
         remoteStream = stream;
