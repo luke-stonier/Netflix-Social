@@ -192,27 +192,14 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         if (data.id == user_id) return;
-        if (!heartbeatRunning) return;
+        ConnectVideoStream(data.client.host); //only host is initiator
         peer.on('signal', (sdp_data) => {
-            socket.emit('make-offer', { client: data, offer: sdp_data });
-        });
-        peer.on('data', (data) => {
-            console.log(data);
+            socket.emit('sdp-ping', { client_id: data.id, offer: sdp_data});
         });
     });
 
-    socket.on('receive-offer', async (data) => {
+    socket.on('sdp-ping', async (data) => {
         peer.signal(data.offer);
-        peer.on('signal', (sdp_data) => {
-            socket.emit('make-answer', { client: data.sender, offer: sdp_data });
-        });
-        peer.on('data', (data) => {
-            console.log(data);
-        });
-    });
-
-    socket.on('receive-answer', async (data) => {
-        peer.signal(data.answer);
     });
 
     socket.on('client-disconnected', (data) => {
@@ -225,7 +212,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         lastServerMessage = data;
 
         sendMessageToNetflixPage(dataModel({ action: 'client-created', client: data.client }))
-        ConnectVideoStream(data.client.host);
+
         // Register data locally
         user_id = (user_id || data.client.id);
         if (data.client.host && !heartbeatRunning)
@@ -282,7 +269,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 
 function ConnectVideoStream(initiator) {
     // if (peerConnected) return;
-    console.log(`creating peer when peerConnected is: ${peerConnected}`);
+    console.log(`creating peer as initiator ${initiator} when peerConnected is: ${peerConnected}`);
     if (!mediaStream) {
         console.log('NO STREAM');
         return;
@@ -291,6 +278,9 @@ function ConnectVideoStream(initiator) {
     peer.on('stream', (stream) => {
         remoteStream = stream;
         getPopupElement('remote-video').srcObject = remoteStream;
+    });
+    peer.on('data', (data) => {
+        console.log(data);
     });
     peer.on('connect', () => {
         console.log('CONNECTED');
