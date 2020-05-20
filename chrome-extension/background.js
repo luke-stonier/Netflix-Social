@@ -21,7 +21,7 @@ var groupKey;
 var displayName;
 var user_id;
 var socket;
-var peer;
+// var peer;
 var peerConnected;
 
 var mediaStream;
