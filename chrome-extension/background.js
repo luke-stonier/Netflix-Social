@@ -193,9 +193,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
         if (data.id == user_id) return;
         ConnectVideoStream(true);
-        peer.on('signal', (sdp_data) => {
-            socket.emit('sdp-ping', { client_id: data.id, offer: sdp_data});
-        });
     });
 
     socket.on('sdp-ping', async (data) => {
@@ -285,6 +282,9 @@ function ConnectVideoStream(initiator) {
     });
     peer.on('connect', () => {
         console.log('CONNECTED');
+    });
+    peer.on('signal', (sdp_data) => {
+        socket.emit('sdp-ping', { client_id: data.id, offer: sdp_data});
     });
     peerConnected = true;
 }
