@@ -188,10 +188,10 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         AddChatWindow();
     });
 
-    socket.on('client-connected', async (data) => {
-        console.log(data);
-        sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
-        if (data.id == user_id) return;
+    socket.on('client-connected', async (client) => {
+        console.log(client);
+        sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: client }));
+        if (client.id == user_id) return;
         ConnectVideoStream(true);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
@@ -200,6 +200,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('receive-offer', async (data) => {
+        console.log('receive-offer');
         ConnectVideoStream(false);
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
@@ -208,6 +209,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('receive-answer', async (data) => {
+        console.log('receive-answer');
         peer.signal(data.answer);
     });
 
@@ -285,7 +287,8 @@ function ConnectVideoStream(initiator) {
     }
     peer = new SimplePeer({
         initiator: initiator,
-        stream: mediaStream
+        stream: mediaStream,
+        trickle: false
     });
     peerConnected = true;
     peer.on('stream', (stream) => {
