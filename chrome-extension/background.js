@@ -286,7 +286,11 @@ function ConnectVideoStream(initiator) {
         console.log('NO STREAM');
         return;
     }
-    peer = new SimplePeer({ initiator: initiator, stream: mediaStream });
+    peer = new SimplePeer({
+        initiator: initiator,
+        stream: mediaStream,
+        trickle: false
+    });
     peer.on('stream', (stream) => {
         remoteStream = stream;
         getPopupElement('remote-video').srcObject = remoteStream;
