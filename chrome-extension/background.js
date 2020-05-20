@@ -190,8 +190,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
-        if (data.id == user_id) return;
-        ConnectVideoStream(true);
+        ConnectVideoStream(data.id != user_id);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
             socket.emit('make-offer', { client: data, offer: sdp_data });
@@ -202,7 +201,6 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 
     socket.on('receive-offer', async (data) => {
-        ConnectVideoStream(false);
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
             socket.emit('make-answer', { client: data.sender, offer: sdp_data });
