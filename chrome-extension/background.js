@@ -22,6 +22,7 @@ var displayName;
 var user_id;
 var socket;
 var Peer;
+var peerConnected;
 
 var mediaStream;
 var remoteStream;
@@ -280,6 +281,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 }
 
 function ConnectVideoStream(initiator) {
+    if (peer && peerConnected) return;
     console.log('CONNECT VIDEO STREAM (CREATE PEER)');
     if (!mediaStream) {
         console.log('NO STREAM');
@@ -294,6 +296,7 @@ function ConnectVideoStream(initiator) {
         getPopupElement('remote-video').srcObject = remoteStream;
     });
     peer.on('connect', () => {
+        peerConnected = true;
         console.log('CONNECTED');
     });
 }
@@ -383,6 +386,7 @@ function DisconnectFromSocket() {
     heartbeatRunning = false;
     user_id = null;
     lastServerMessage = null;
+    peerConnected = false;
     peer.destroy();
     socket.close();
 }
