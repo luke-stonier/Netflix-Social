@@ -191,22 +191,19 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (client) => {
         console.log(client);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: client }));
-        if (client.id == user_id) return;
-        ConnectVideoStream(true, () => {
-            peer.on('signal', (sdp_data) => {
-                socket.emit('make-offer', { client: client, offer: sdp_data });
-            });
+        ConnectVideoStream(heartbeatRunning);
+        if (!heartbeatRunning) return;
+        peer.on('signal', (sdp_data) => {
+            socket.emit('make-offer', { client: client, offer: sdp_data });
         });
     });
 
     socket.on('receive-offer', async (data) => {
         console.log('receive-offer');
         peer.signal(data.offer);
-        ConnectVideoStream(false, () => {
-            peer.on('signal', (sdp_data) => {
-                console.log(sdp_data);
-                socket.emit('make-answer', { client: data.sender, offer: sdp_data });
-            });
+        peer.on('signal', (sdp_data) => {
+            console.log(sdp_data);
+            socket.emit('make-answer', { client: data.sender, offer: sdp_data });
         });
     });
 
@@ -280,7 +277,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     });
 }
 
-function ConnectVideoStream(initiator, callback) {
+function ConnectVideoStream(initiator) {
     if (peerConnected) return;
     console.log(`CONNECT VIDEO STREAM (CREATE PEER) as initiatior ${initiator}`);
     if (!mediaStream) {
@@ -303,7 +300,6 @@ function ConnectVideoStream(initiator, callback) {
     peer.on('data', (data) => {
         console.log(data);
     });
-    callback();
 }
 
 function StartHeartbeat() {
