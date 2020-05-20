@@ -194,6 +194,7 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
         ConnectVideoStream(heartbeatRunning);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
+            if (client.id == user_id) return;
             socket.emit('make-offer', { client: client, offer: sdp_data });
         });
     });
