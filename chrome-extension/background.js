@@ -283,7 +283,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 }
 
 function ConnectVideoStream(initiator) {
-    if (peerConnected) return;
+    // if (peerConnected) return;
+    console.log(`creating peer when peerConnected is: ${peerConnected}`);
     if (!mediaStream) {
         console.log('NO STREAM');
         return;
