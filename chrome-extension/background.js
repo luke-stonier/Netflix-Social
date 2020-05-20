@@ -21,7 +21,7 @@ var groupKey;
 var displayName;
 var user_id;
 var socket;
-var Peer;
+var peer;
 var peerConnected;
 
 var mediaStream;
@@ -191,23 +191,19 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
     socket.on('client-connected', async (data) => {
         console.log(data);
         sendMessageToNetflixPage(dataModel({ action: 'client-connected', client: data }));
-        ConnectVideoStream(data.id != user_id);
+        if (data.id == user_id) return;
+        ConnectVideoStream(true);
         if (!heartbeatRunning) return;
         peer.on('signal', (sdp_data) => {
             socket.emit('make-offer', { client: data, offer: sdp_data });
         });
-        peer.on('data', (data) => {
-            console.log(data);
-        });
     });
 
     socket.on('receive-offer', async (data) => {
+        ConnectVideoStream(false);
         peer.signal(data.offer);
         peer.on('signal', (sdp_data) => {
             socket.emit('make-answer', { client: data.sender, offer: sdp_data });
-        });
-        peer.on('data', (data) => {
-            console.log(data);
         });
     });
 
@@ -281,8 +277,8 @@ function connectToGroup(address, groupId, displayName, watch_url, current_time) 
 }
 
 function ConnectVideoStream(initiator) {
-    if (peer && peerConnected) return;
-    console.log('CONNECT VIDEO STREAM (CREATE PEER)');
+    if (peerConnected) return;
+    console.log(`CONNECT VIDEO STREAM (CREATE PEER) as initiatior ${initiator}`);
     if (!mediaStream) {
         console.log('NO STREAM');
         return;
@@ -291,13 +287,16 @@ function ConnectVideoStream(initiator) {
         initiator: initiator,
         stream: mediaStream
     });
+    peerConnected = true;
     peer.on('stream', (stream) => {
         remoteStream = stream;
         getPopupElement('remote-video').srcObject = remoteStream;
     });
     peer.on('connect', () => {
-        peerConnected = true;
         console.log('CONNECTED');
+    });
+    peer.on('data', (data) => {
+        console.log(data);
     });
 }
 
